@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Medieval Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas" width="960" height="600"></canvas>
+    <div id="hud">
+      <div id="hud-life"><span class="hud-label">Life</span><div class="bar life-bar"><div class="bar-fill" id="life-fill"></div></div><span id="life-num"></span></div>
+      <div id="hud-q"><span class="hud-label">Quickels</span><span id="q-num">0</span></div>
+      <div id="hud-area" id="area-name"></div>
+      <button id="inv-btn" title="Inventory (I)">🎒 Inventory</button>
+    </div>
+    <div id="ui-root"></div>
+    <div id="title-screen">
+      <h1>MEDIEVAL JOURNEY</h1>
+      <p class="subtitle">a hand-drawn board game, digitized</p>
+      <button id="new-game-btn" class="title-btn">New Game</button>
+      <button id="continue-btn" class="title-btn">Continue</button>
+      <div class="controls-help">
+        WASD / Arrows: move &nbsp;•&nbsp; E / Space / Click: interact &nbsp;•&nbsp; I: inventory
+      </div>
+    </div>
+    <div id="death-screen" class="hidden">
+      <h1>YOU HAVE FALLEN</h1>
+      <p>Your journey ends here... for now.</p>
+      <button id="restart-btn" class="title-btn">Start Over</button>
+    </div>
+  </div>
+
+  <script src="js/pixelart.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/data/mapgen.js"></script>
+  <script src="js/data/items.js"></script>
+  <script src="js/data/enemies.js"></script>
+
+  <script>const Areas = {};</script>
+
+  <script src="js/data/happytown.js"></script>
+  <script src="js/data/farmlands.js"></script>
+  <script src="js/data/richvillage.js"></script>
+  <script src="js/data/randomtavern.js"></script>
+  <script src="js/data/hermit_riverbank.js"></script>
+  <script src="js/data/woods.js"></script>
+  <script src="js/data/monsterhills.js"></script>
+  <script src="js/data/thegate.js"></script>
+  <script src="js/data/castle.js"></script>
+  <script src="js/data/merlin.js"></script>
+  <script src="js/data/overworld_south.js"></script>
+  <script src="js/data/overworld_north.js"></script>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
