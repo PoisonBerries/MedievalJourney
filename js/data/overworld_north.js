@@ -38,8 +38,8 @@ const ONA = {
   function onDanger(engine) { const en = rng.pick(dangerPool)(); en.lootTable = difficultyLoot; Combat.start(engine.state, en); }
 
   const legend = {
-    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_snow0', 't_snow1', 't_grass1', 't_snow0']) },
-    ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_snow2']) },
+    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_snow0', 't_snow1', 't_grass1', 't_snow0']), danger: 0.015, onDanger: onRoadDanger },
+    ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_snow2']), danger: 0.015, onDanger: onRoadDanger },
     '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1']), danger: 0.03, onDanger: onRoadDanger },
     'D': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road2']), overlay: 'o_rock', danger: 0.12, onDanger },
     'T': { tile: 't_snow0', overlay: (tx,ty) => hashPick(tx,ty,['o_pine', 'o_pine', 'o_tree']), solid: true },
