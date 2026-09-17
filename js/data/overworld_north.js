@@ -51,7 +51,7 @@ const ONA = {
   }
 
   const entities = [
-    marker(A.monsterHills, 'o_castletower', 'Monster Hills', 'climb into the Monster Hills', (e) => e.loadArea('monsterhills', Areas.monsterhills.entryPoint)),
+    marker(A.monsterHills, 'o_snowyhill', 'Monster Hills', 'climb into the Monster Hills', (e) => e.loadArea('monsterhills', Areas.monsterhills.entryPoint)),
     marker(A.merlinsHideout, 'npc_merlin', "Merlin's Hideout", "enter Merlin's Hideout", (e) => e.loadArea('merlin', Areas.merlin.entryPoint)),
     marker(A.castleEntrance, 'o_castletower', 'The Castle', 'enter the very large Castle', (e) => e.loadArea('castle', Areas.castle.entryPoint)),
     { x: 20, y: 5, sprite: 'o_sign', label: 'Land of Difficulty', interact: true, promptText: 'read sign', blocking: false,

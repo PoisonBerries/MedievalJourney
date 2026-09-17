@@ -64,9 +64,8 @@
     startGame(s);
   };
 
-  invBtn.onclick = () => { if (engine) UI.openInventory(engine.state); };
-  Events.on('toggle-inventory', () => { if (engine) UI.openInventory(engine.state); });
-  Events.on('escape-key', () => { /* reserved */ });
+  invBtn.onclick = () => { if (engine) UI.toggleInventory(engine.state); };
+  Events.on('toggle-inventory', () => { if (engine) UI.toggleInventory(engine.state); });
 
   window.addEventListener('beforeunload', () => { if (engine) GameState.save(engine.state); });
 })();

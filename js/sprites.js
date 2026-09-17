@@ -17,7 +17,7 @@ function spriteBox(key) {
   if (!key) return { w: TILE, h: TILE };
   if (key.startsWith('player') || key.startsWith('npc_') || key.startsWith('e_')) return { w: CHAR_W, h: CHAR_H };
   if (key.startsWith('b_')) return { w: BLDG_W, h: BLDG_H };
-  if (key === 'o_castletower') return { w: BLDG_W, h: BLDG_H };
+  if (key === 'o_castletower' || key === 'o_snowyhill' || key === 'o_gatehouse') return { w: BLDG_W, h: BLDG_H };
   if (key === 'o_tree' || key === 'o_bigbush') return { w: TILE, h: TILE };
   return { w: TILE, h: TILE };
 }
@@ -226,6 +226,38 @@ function drawCastleTower(grid, H) {
   H.rect(grid, 26, 40, 12, 20, PAL.stoneDark);
   H.outlineSilhouette(grid, PAL.outline);
 }
+function drawSnowyHill(grid, H) {
+  // a rocky, snow-capped mountain mound — used for the Monster Hills
+  // waypoint, so it should read as terrain, not a building.
+  H.ellipse(grid, 32, 60, 24, 4, PAL.shadow);
+  H.blotch(grid, 32, 40, 22, PAL.stoneMid, 2);
+  H.blotch(grid, 18, 46, 14, PAL.stoneDark, 5);
+  H.blotch(grid, 46, 44, 13, PAL.stoneDark, 8);
+  H.blotch(grid, 32, 24, 15, PAL.snow, 3);
+  H.blotch(grid, 22, 32, 8, PAL.snow, 6);
+  H.blotch(grid, 42, 30, 8, PAL.snow, 9);
+  for (let i = 0; i < 5; i++) H.set(grid, 26 + i * 3, 30 + (i % 2) * 2, PAL.snowLo);
+  H.ellipse(grid, 32, 58, 7, 6, PAL.black); // cave mouth
+  H.ellipse(grid, 32, 58, 5, 4, PAL.outline);
+  H.outlineSilhouette(grid, PAL.outline);
+}
+function drawGatehouse(grid, H) {
+  // twin towers flanking a barred archway — a checkpoint, distinct from
+  // both the snowy hill and the castle's single round tower.
+  H.ellipse(grid, 32, 61, 22, 4, PAL.shadow);
+  [4, 40].forEach(tx => {
+    H.rect(grid, tx, 14, 20, 46, PAL.stoneMid);
+    for (let y = 14; y < 60; y += 8) H.rect(grid, tx, y, 20, 1, PAL.stoneDark);
+    H.rect(grid, tx, 14, 2, 46, PAL.stoneHi);
+    for (let i = 0; i < 3; i++) H.rect(grid, tx + 1 + i * 7, 8, 5, 6, PAL.stoneMid);
+  });
+  H.rect(grid, 22, 30, 20, 30, PAL.black);
+  for (let x = 24; x < 40; x += 4) H.rect(grid, x, 30, 2, 30, PAL.stoneDark);
+  H.rect(grid, 22, 30, 20, 4, PAL.stoneDark);
+  H.rect(grid, 26, 6, 3, 10, PAL.wood2);
+  H.rect(grid, 26, 4, 8, 5, PAL.cloth_red);
+  H.outlineSilhouette(grid, PAL.outline);
+}
 
 // ------------------------------------------------------------ BUILDINGS ---
 // 64x64, anchored at the base (door) — visually taller than a tile, like a
@@ -394,22 +426,95 @@ function drawBow(grid, H) { H.line(grid, 4, 1, 2, 8, PAL.wood2); H.line(grid, 2,
 function drawCrossbow(grid, H) { H.rect(grid, 2, 7, 12, 2, PAL.wood2); H.rect(grid, 6, 2, 2, 13, PAL.wood1); H.line(grid, 6, 2, 1, 8, PAL.bone); H.line(grid, 8, 2, 13, 8, PAL.bone); }
 function drawPitchfork(grid, H) { H.rect(grid, 7, 4, 2, 11, PAL.wood2); H.rect(grid, 4, 1, 2, 4, PAL.bladeDark); H.rect(grid, 7, 1, 2, 4, PAL.bladeDark); H.rect(grid, 10, 1, 2, 4, PAL.bladeDark); }
 function drawMace(grid, H) { H.rect(grid, 7, 5, 2, 10, PAL.wood2); H.circle(grid, 8, 4, 4, PAL.stoneMid); for (let a = 0; a < 6; a++) H.set(grid, 8 + Math.round(4 * Math.cos(a)), 4 + Math.round(4 * Math.sin(a)), PAL.stoneDark); }
-function drawClub(grid, H) { H.rect(grid, 7, 6, 2, 9, PAL.wood2); H.rect(grid, 5, 1, 6, 6, PAL.wood1); }
+function drawClub(grid, H) {
+  // a knobby wooden cudgel, not a lollipop: tapered handle, lumpy wide head.
+  H.rect(grid, 7, 8, 2, 7, PAL.woodLo);
+  H.blotch(grid, 8, 5, 5, PAL.wood1, 4);
+  H.set(grid, 6, 3, PAL.wood3); H.set(grid, 10, 6, PAL.woodLo); H.set(grid, 7, 7, PAL.woodLo);
+}
 function drawArrow(grid, H, headColor) { H.rect(grid, 7, 4, 2, 10, PAL.arrowShaft); H.rect(grid, 5, 1, 6, 4, headColor); H.rect(grid, 5, 13, 2, 2, PAL.white); H.rect(grid, 9, 13, 2, 2, PAL.white); }
+function drawFlamingArrow(grid, H) {
+  drawArrow(grid, H, PAL.bladeDark);
+  H.circle(grid, 8, 2, 3, PAL.flame);
+  H.circle(grid, 8, 0, 2, PAL.flowerYellow);
+  H.set(grid, 6, 1, PAL.flame); H.set(grid, 10, 1, PAL.flame);
+}
+function drawTripleArrow(grid, H) {
+  [3, 8, 13].forEach((x, i) => {
+    H.rect(grid, x, 5 + i % 2, 1, 9 - i % 2, PAL.arrowShaft);
+    H.rect(grid, x - 1, 2 + i % 2, 3, 3, PAL.silver);
+  });
+}
+function drawStunArrow(grid, H) {
+  drawArrow(grid, H, PAL.potionBlue);
+  H.line(grid, 2, 3, 4, 6, PAL.flowerYellow); H.line(grid, 4, 6, 2, 7, PAL.flowerYellow); H.line(grid, 2, 7, 4, 10, PAL.flowerYellow);
+}
 function drawPotion(grid, H, color) { H.rect(grid, 6, 1, 4, 3, PAL.wood2); H.circle(grid, 8, 10, 5, color); H.rect(grid, 5, 6, 6, 5, color); H.frame(grid, 5, 6, 6, 8, PAL.glassLight); }
-function drawArmorPiece(grid, H, kind) {
-  if (kind === 'helmet') { H.circle(grid, 8, 7, 6, PAL.silver); H.rect(grid, 4, 9, 8, 2, PAL.stoneDark); }
-  if (kind === 'chest') { H.rect(grid, 3, 3, 10, 10, PAL.silver); H.rect(grid, 6, 3, 4, 10, PAL.stoneMid); }
-  if (kind === 'boots') { H.rect(grid, 3, 6, 4, 8, PAL.hilt); H.rect(grid, 9, 6, 4, 8, PAL.hilt); }
+function drawBroom(grid, H) {
+  // handle up top, straw bristles fanning WIDE at the bottom (not the other
+  // way around — a narrow-at-bottom fan just reads as a blob, not a broom).
+  H.rect(grid, 7, 0, 2, 8, PAL.wood1);
+  H.set(grid, 7, 0, PAL.wood3);
+  const tips = [1, 3, 5, 7, 8, 10, 12, 14];
+  tips.forEach((tx, i) => H.line(grid, 7 + (i % 2), 9, tx, 15, i % 2 === 0 ? PAL.gold : PAL.goldDark));
+  H.rect(grid, 5, 8, 6, 2, PAL.woodLo);
+}
+function drawArmorPiece(grid, H, kind, gold) {
+  const metal = gold ? PAL.gold : PAL.silver, metalLo = gold ? PAL.goldDark : PAL.stoneMid;
+  if (kind === 'helmet') {
+    H.circle(grid, 8, 7, 6, metal);
+    H.rect(grid, 4, 9, 8, 2, metalLo);
+    H.rect(grid, 7, 3, 2, 6, metalLo); // nose guard
+    H.set(grid, 4, 6, PAL.glassLight);
+  }
+  if (kind === 'chest') {
+    // rounded shoulders + a tapered waist so it reads as a torso, not a plaque.
+    H.circle(grid, 4, 4, 2, metal); H.circle(grid, 12, 4, 2, metal);
+    H.rect(grid, 3, 4, 10, 9, metal);
+    H.rect(grid, 4, 12, 8, 2, metal);
+    H.rect(grid, 6, 3, 4, 11, metalLo);
+    H.set(grid, 5, 6, PAL.glassLight); H.set(grid, 11, 6, PAL.glassLight);
+    H.outlineSilhouette(grid, PAL.outline);
+  }
+  if (kind === 'boots') {
+    H.rect(grid, 3, 4, 3, 8, metal); H.rect(grid, 9, 4, 3, 8, metal);
+    H.ellipse(grid, 4, 12, 3, 2, metal); H.ellipse(grid, 10, 12, 3, 2, metal); // curved toes
+    H.rect(grid, 1, 12, 6, 2, metalLo); H.rect(grid, 7, 12, 6, 2, metalLo);
+    H.line(grid, 1, 13, 7, 13, PAL.outline); H.line(grid, 7, 13, 13, 13, PAL.outline);
+  }
 }
 function drawCoin(grid, H) { H.circle(grid, 8, 8, 6, PAL.gold); H.circle(grid, 8, 8, 4, PAL.goldDark); }
 function drawScroll(grid, H) { H.rect(grid, 3, 4, 10, 8, PAL.bone); H.rect(grid, 2, 3, 2, 10, PAL.wood2); H.rect(grid, 12, 3, 2, 10, PAL.wood2); for (let y = 6; y < 11; y += 2) H.rect(grid, 5, y, 6, 1, PAL.hairBrown); }
 function drawKey(grid, H) { H.circle(grid, 5, 5, 3, PAL.gold); H.rect(grid, 5, 5, 8, 2, PAL.gold); H.rect(grid, 11, 7, 1, 3, PAL.gold); H.rect(grid, 13, 7, 1, 3, PAL.gold); }
 function drawChest(grid, H) { H.rect(grid, 2, 7, 12, 7, PAL.wood1); H.rect(grid, 2, 5, 12, 3, PAL.wood2); H.rect(grid, 7, 8, 2, 2, PAL.gold); H.frame(grid, 2, 5, 12, 9, PAL.outline); }
 function drawBoat(grid, H) { H.rect(grid, 2, 6, 12, 4, PAL.wood1); H.rect(grid, 1, 9, 14, 3, PAL.wood2); H.rect(grid, 7, 1, 1, 6, PAL.wood2); H.rect(grid, 8, 1, 5, 4, PAL.cloth_white); }
-function drawHorseIcon(grid, H) { H.rect(grid, 2, 8, 10, 5, PAL.mooseBrown); H.circle(grid, 12, 7, 3, PAL.mooseBrown); H.rect(grid, 2, 13, 2, 2, PAL.dirt2); H.rect(grid, 8, 13, 2, 2, PAL.dirt2); }
-function drawBread(grid, H) { H.circle(grid, 8, 9, 6, PAL.dirt1); H.circle(grid, 8, 7, 5, PAL.gold); H.line(grid, 4, 7, 12, 7, PAL.dirt2); }
-function drawPie(grid, H) { H.circle(grid, 8, 9, 6, PAL.roofRed); H.circle(grid, 8, 8, 5, PAL.gold); H.line(grid, 8, 3, 8, 13, PAL.dirt2); H.line(grid, 3, 9, 13, 9, PAL.dirt2); }
+function drawHorseIcon(grid, H) {
+  H.rect(grid, 2, 7, 9, 5, PAL.mooseBrown); // body
+  H.rect(grid, 9, 3, 4, 7, PAL.mooseBrown); // neck up to head
+  H.circle(grid, 13, 3, 2, PAL.mooseBrown); // head
+  H.line(grid, 9, 2, 11, 5, PAL.hairBlack); H.line(grid, 10, 1, 12, 4, PAL.hairBlack); // mane
+  H.rect(grid, 3, 11, 2, 3, PAL.dirt2); H.rect(grid, 8, 11, 2, 3, PAL.dirt2); // legs
+  H.line(grid, 2, 8, 0, 12, PAL.hairBlack); // tail
+  H.set(grid, 14, 2, PAL.outline);
+}
+function drawBread(grid, H) {
+  // an oblong loaf with diagonal slashes across the top.
+  H.ellipse(grid, 8, 9, 6, 4, PAL.dirt1);
+  H.ellipse(grid, 8, 7, 6, 4, PAL.gold);
+  H.line(grid, 4, 6, 7, 3, PAL.dirt2); H.line(grid, 7, 7, 10, 4, PAL.dirt2); H.line(grid, 10, 8, 12, 6, PAL.dirt2);
+}
+function drawPie(grid, H) {
+  // round, with a lattice crust clipped to the tin — no outer square frame,
+  // or it just reads as a waffle/grate instead of a pie.
+  H.circle(grid, 8, 9, 6, PAL.wood3);
+  H.circle(grid, 8, 9, 5, PAL.roofRed);
+  for (let i = -3; i <= 3; i += 2) H.line(grid, 8 + i, 5, 8 + i, 13, PAL.gold);
+  H.line(grid, 3, 9, 13, 9, PAL.gold);
+  for (let a = 0; a < 10; a++) {
+    const ang = (a / 10) * Math.PI * 2;
+    H.set(grid, Math.round(8 + Math.cos(ang) * 6), Math.round(9 + Math.sin(ang) * 6), PAL.wood1);
+  }
+}
 function drawFish(grid, H) { H.circle(grid, 6, 8, 4, PAL.water3); H.rect(grid, 10, 6, 4, 4, PAL.water3); H.set(grid, 4, 7, PAL.outline); }
 function drawGem(grid, H, color) { H.rect(grid, 5, 4, 6, 4, color); H.rect(grid, 3, 6, 10, 4, color); H.rect(grid, 5, 10, 6, 3, color); H.set(grid, 6, 6, PAL.cream); }
 
@@ -448,6 +553,8 @@ function initSprites() {
   reg('o_fence', 32, 32, drawFence, 1);
   reg('o_castlewall', 32, 32, drawCastleWall, 1);
   reg('o_castletower', 64, 64, drawCastleTower, 1);
+  reg('o_snowyhill', 64, 64, drawSnowyHill, 1);
+  reg('o_gatehouse', 64, 64, drawGatehouse, 1);
 
   // buildings (64x64)
   const B = {
@@ -529,16 +636,22 @@ function initSprites() {
   reg('i_mace', 16, 16, drawMace, 2);
   reg('i_club', 16, 16, drawClub, 2);
   reg('i_arrow', 16, 16, (g, H) => drawArrow(g, H, PAL.bladeDark), 2);
-  reg('i_arrow_flame', 16, 16, (g, H) => drawArrow(g, H, PAL.flame), 2);
-  reg('i_arrow_triple', 16, 16, (g, H) => drawArrow(g, H, PAL.silver), 2);
-  reg('i_arrow_stun', 16, 16, (g, H) => drawArrow(g, H, PAL.potionBlue), 2);
+  reg('i_arrow_flame', 16, 16, drawFlamingArrow, 2);
+  reg('i_arrow_triple', 16, 16, drawTripleArrow, 2);
+  reg('i_arrow_stun', 16, 16, drawStunArrow, 2);
   reg('i_potion_red', 16, 16, (g, H) => drawPotion(g, H, PAL.potionRed), 2);
   reg('i_potion_green', 16, 16, (g, H) => drawPotion(g, H, PAL.potionGreen), 2);
   reg('i_potion_blue', 16, 16, (g, H) => drawPotion(g, H, PAL.potionBlue), 2);
   reg('i_potion_purple', 16, 16, (g, H) => drawPotion(g, H, PAL.potionPurple), 2);
+  reg('i_potion_teal', 16, 16, (g, H) => drawPotion(g, H, PAL.potionTeal), 2);
+  reg('i_potion_orange', 16, 16, (g, H) => drawPotion(g, H, PAL.potionOrange), 2);
+  reg('i_potion_yellow', 16, 16, (g, H) => drawPotion(g, H, PAL.potionYellow), 2);
+  reg('i_broom', 16, 16, drawBroom, 2);
   reg('i_helmet', 16, 16, (g, H) => drawArmorPiece(g, H, 'helmet'), 2);
   reg('i_chest', 16, 16, (g, H) => drawArmorPiece(g, H, 'chest'), 2);
   reg('i_boots', 16, 16, (g, H) => drawArmorPiece(g, H, 'boots'), 2);
+  reg('i_helmet_gold', 16, 16, (g, H) => drawArmorPiece(g, H, 'helmet', true), 2);
+  reg('i_chest_gold', 16, 16, (g, H) => drawArmorPiece(g, H, 'chest', true), 2);
   reg('i_coin', 16, 16, drawCoin, 2);
   reg('i_scroll', 16, 16, drawScroll, 2);
   reg('i_key', 16, 16, drawKey, 2);

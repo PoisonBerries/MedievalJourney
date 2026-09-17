@@ -170,6 +170,7 @@ const PAL = {
   arrowShaft: '#8a5a34', arrowHead: '#c7cbd1', flame: '#e8763a',
 
   potionRed: '#c23a4a', potionGreen: '#3fa860', potionBlue: '#3a7ac2', potionPurple: '#8a4ac2',
+  potionTeal: '#2fa896', potionOrange: '#d97a2f', potionYellow: '#e8c847',
   glassLight: '#dfe9f2',
 };
 

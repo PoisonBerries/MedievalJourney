@@ -165,6 +165,7 @@ const Combat = (() => {
       function finish(result) {
         box.remove();
         UI.unlock();
+        UI.clearActive('combat-outcome');
         resolve({ result });
       }
 
@@ -203,6 +204,7 @@ const Combat = (() => {
 
         if (outcome) {
           box.querySelector('.continue-btn').onclick = () => finish(outcome);
+          UI.setActive('combat-outcome', () => finish(outcome));
           return;
         }
 
@@ -250,21 +252,23 @@ const Combat = (() => {
         if (!usable.length) { pushLog('No usable items.'); render(); return; }
         const menu = document.createElement('div');
         menu.className = 'item-menu';
-        menu.innerHTML = usable.map((i, idx) => `<button class="choice-btn small" data-idx="${idx}">${i.name} x${i.qty}</button>`).join('') + `<button class="choice-btn small cancel">Cancel</button>`;
+        menu.innerHTML = usable.map((i, idx) => `<button class="choice-btn small" data-idx="${idx}">${i.name} x${i.qty}</button>`).join('') + `<button class="choice-btn small cancel">Cancel (Esc)</button>`;
         box.appendChild(menu);
+        const closeMenu = () => { menu.remove(); UI.clearActive('combat-item'); };
+        UI.setActive('combat-item', closeMenu);
         menu.querySelectorAll('button[data-idx]').forEach(btn => {
           btn.onclick = () => {
             const item = usable[+btn.dataset.idx];
             item.combatUse(state, { pushLog, foes });
             GameState.removeItem(state, item.id, 1);
-            menu.remove();
+            closeMenu();
             companionAttacks();
             if (checkEnd()) return;
             enemyActTurn(false, equippedWeapon());
             if (!checkEnd()) render();
           };
         });
-        menu.querySelector('.cancel').onclick = () => menu.remove();
+        menu.querySelector('.cancel').onclick = closeMenu;
       }
 
       render();

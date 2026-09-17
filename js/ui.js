@@ -11,6 +11,18 @@ const UI = (() => {
 
   const root = document.getElementById('ui-root');
 
+  // ---- ESC support ------------------------------------------------------
+  // Only ONE thing is ever "closable via Escape" at a time in this game's
+  // flow (dialogue -> choice -> next dialogue, never nested). Choices are
+  // deliberately never Escape-closable — a decision prompt has no safe
+  // default to fall back to, so Escape simply does nothing while one is
+  // open, rather than risk silently picking an option for the player.
+  let activeType = null, activeClose = null;
+  function setActive(type, fn) { activeType = type; activeClose = fn; }
+  function clearActive(type) { if (!type || activeType === type) { activeType = null; activeClose = null; } }
+  function isOpen(type) { return activeType === type; }
+  Events.on('escape-key', () => { if (activeClose) activeClose(); });
+
   function el(tag, cls, html) {
     const e = document.createElement('div');
     e.className = cls || '';
@@ -37,7 +49,7 @@ const UI = (() => {
       box.innerHTML = `
         ${opts.speaker ? `<div class="speaker">${opts.speaker}</div>` : ''}
         <div class="dtext"></div>
-        <div class="continue">▼ press E / click</div>`;
+        <div class="continue">▼ press E / click / Esc</div>`;
       root.appendChild(box);
       const dtext = box.querySelector('.dtext');
       let i = 0;
@@ -54,12 +66,14 @@ const UI = (() => {
         box.removeEventListener('click', onClick);
         box.remove();
         unlock();
+        clearActive('dialogue');
         resolve();
       }
       function onKey(e) { if (['e', ' ', 'enter', 'f'].includes(e.key.toLowerCase())) finish(); }
       function onClick() { finish(); }
       window.addEventListener('keydown', onKey);
       box.addEventListener('click', onClick);
+      setActive('dialogue', finish);
     });
   }
 
@@ -104,12 +118,14 @@ const UI = (() => {
     lock();
     return new Promise(resolve => {
       const box = el('div', 'modal shop-modal');
+      const closeShop = () => { box.remove(); unlock(); clearActive('shop'); resolve(); };
+      setActive('shop', closeShop);
       const render = () => {
         box.innerHTML = `
           <div class="modal-head">${shop.name}<span class="qtag">${state.q} q</span></div>
           ${shop.intro ? `<div class="shop-intro">${shop.intro}</div>` : ''}
           <div class="shop-list"></div>
-          <button class="close-btn">Leave</button>`;
+          <button class="close-btn">Leave (Esc)</button>`;
         const list = box.querySelector('.shop-list');
         shop.items.forEach(item => {
           const row = document.createElement('div');
@@ -127,7 +143,7 @@ const UI = (() => {
           };
           list.appendChild(row);
         });
-        box.querySelector('.close-btn').onclick = () => { box.remove(); unlock(); resolve(); };
+        box.querySelector('.close-btn').onclick = closeShop;
       };
       render();
       root.appendChild(box);
@@ -139,6 +155,8 @@ const UI = (() => {
     lock();
     return new Promise(resolve => {
       const box = el('div', 'modal inv-modal');
+      const closeInv = () => { box.remove(); unlock(); clearActive('inventory'); resolve(); };
+      setActive('inventory', closeInv);
       const armorList = Object.entries(state.armor).filter(([, v]) => v).map(([slot, v]) => `${slot}: ${v.name}`).join('<br>') || 'none';
       const arrows = Object.entries(state.arrows).filter(([, n]) => n > 0).map(([k, n]) => `${k} x${n}`).join(', ') || 'none';
       box.innerHTML = `
@@ -151,18 +169,23 @@ const UI = (() => {
         <div class="inv-section"><b>Companions</b><br>${state.companions.map(c => c.name).join(', ') || 'none'}</div>
         <div class="inv-section"><b>Path:</b> ${state.flags.path || 'undecided'}</div>
         <div class="weapon-switch"></div>
-        <button class="close-btn">Close</button>`;
+        <button class="close-btn">Close (Esc)</button>`;
       const sw = box.querySelector('.weapon-switch');
       state.weapons.forEach(w => {
         const b = document.createElement('button');
         b.className = 'choice-btn small';
         b.textContent = 'Equip ' + w.name;
-        b.onclick = () => { state.equippedWeapon = w.id; notify('Equipped ' + w.name); box.remove(); unlock(); resolve(); openInventory(state); };
+        b.onclick = () => { state.equippedWeapon = w.id; notify('Equipped ' + w.name); closeInv(); openInventory(state); };
         sw.appendChild(b);
       });
-      box.querySelector('.close-btn').onclick = () => { box.remove(); unlock(); resolve(); };
+      box.querySelector('.close-btn').onclick = closeInv;
       root.appendChild(box);
     });
+  }
+
+  function toggleInventory(state) {
+    if (isOpen('inventory')) { activeClose(); return; }
+    openInventory(state);
   }
 
   function stun(ms, msg) {
@@ -171,5 +194,5 @@ const UI = (() => {
     return new Promise(resolve => setTimeout(() => { unlock(); resolve(); }, ms));
   }
 
-  return { bind, notify, say, choice, rollBanner, openShop, openInventory, lock, unlock, stun };
+  return { bind, notify, say, choice, rollBanner, openShop, openInventory, toggleInventory, lock, unlock, stun, setActive, clearActive, isOpen };
 })();

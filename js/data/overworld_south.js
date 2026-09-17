@@ -61,7 +61,7 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     marker(A.hermitsHome, 'b_generic_brown', "Hermit's Home", "visit the Hermit's Home", (e) => e.loadArea('hermitshome', Areas.hermitshome.entryPoint)),
     marker(A.riverbank, 'o_sign', 'Riverbank', 'go to the Riverbank', (e) => e.loadArea('riverbank', Areas.riverbank.entryPoint)),
     marker(A.woodsEntrance, 'o_tree', 'The Woods', 'enter the Woods', (e) => e.loadArea('woods', Areas.woods.entryPoint)),
-    marker(A.gate, 'o_castletower', 'The Gate', 'approach the Gate', (e) => e.loadArea('thegate', Areas.thegate.entryPoint)),
+    marker(A.gate, 'o_gatehouse', 'The Gate', 'approach the Gate', (e) => e.loadArea('thegate', Areas.thegate.entryPoint)),
     {
       x: A.lake.x, y: A.lake.y + 4, sprite: 'o_sign', label: 'The Lake', interact: true, promptText: 'approach the water', blocking: false,
       onTrigger: (engine) => lakeScript(engine),
