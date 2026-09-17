@@ -5,7 +5,10 @@
   const { grid, centers, w, h } = buildNodeCorridor(14, { roomW: 6, roomH: 6, cols: 4 });
   const rows = gridToRows(grid.map(r => r.map(c => (c === '#' ? '#' : '.'))));
 
-  const legend = { '.': { tile: 't_forest' }, '#': { tile: 't_hillrock', solid: true } };
+  const legend = {
+    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_forest0', 't_forest1', 't_forest2']), overlay: () => (rng.int(1, 10) === 1 ? rng.pick(['o_flowers0', 'o_flowers1', 'o_tuft0', 'o_tuft1']) : null) },
+    '#': { tile: 't_hillrock', solid: true },
+  };
 
   function at(n) { return centers[n - 1]; }
   function node(n, opts) { return { x: at(n).x, y: at(n).y, ...opts }; }

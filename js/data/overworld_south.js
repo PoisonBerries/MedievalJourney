@@ -25,8 +25,11 @@ const OSA = { // anchor coordinates, reused by region files for their exits
   Object.values(A).forEach(p => widen(grid, p.x, p.y, '=', 3));
 
   blob(grid, A.lake.x, A.lake.y, 4, '~');
-  scatter(grid, 0, 0, W, H, 'T', 0.05, ['=', '~']);
-  scatter(grid, 0, 0, W, H, ',', 0.1, ['=', '~', 'T']);
+  blob(grid, A.lake.x, A.lake.y, 5, 's'); // sandy shore ring (blob overwrites '~' center below)
+  blob(grid, A.lake.x, A.lake.y, 4, '~');
+  scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', '~', 's']);
+  scatter(grid, 0, 0, W, H, ',', 0.14, ['=', '~', 's', 'T']);
+  scatter(grid, 0, 0, W, H, 'f', 0.05, ['=', '~', 's', 'T']);
   // forest ring around woods entrance (visual cue you're nearing the Woods)
   for (let a2 = 0; a2 < 18; a2++) {
     const ang = a2 / 18 * Math.PI * 2;
@@ -36,11 +39,13 @@ const OSA = { // anchor coordinates, reused by region files for their exits
   setAt(grid, A.gate.x, A.gate.y - 1, '='); // road continues to the gate building above
 
   const legend = {
-    '.': { tile: () => rng.pick(['t_grass0', 't_grass0', 't_grass1']) },
-    ',': { tile: 't_grass1' },
-    '=': { tile: 't_road' },
-    'T': { tile: 't_grass0', overlay: 'o_tree', solid: true },
-    '~': { tile: 't_water0', solid: true },
+    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_grass0', 't_grass0', 't_grass1', 't_grass2', 't_grass3', 't_grass4']) },
+    ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_grass5']) },
+    'f': { tile: (tx,ty) => hashPick(tx,ty,['t_grass2', 't_grass4', 't_grass5']), overlay: (tx,ty) => hashPick(tx,ty,['o_flowers0', 'o_flowers1', 'o_flowers2', 'o_tuft0']) },
+    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1', 't_road2']) },
+    'T': { tile: 't_grass0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_tree', 'o_pine']), solid: true },
+    '~': { tile: (tx,ty) => hashPick(tx,ty,['t_water0', 't_water1']), solid: true },
+    's': { tile: 't_sand' },
     '#': { tile: 't_hillrock', solid: true },
   };
 

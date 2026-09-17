@@ -27,13 +27,16 @@ const ONA = {
   }
   blob(grid, 8, 18, 5, '^'); // hills border with a gap for the entrance
   fillRect(grid, A.monsterHills.x - 1, A.monsterHills.y - 1, 3, 3, '=');
-  scatter(grid, 0, 0, W, H, ',', 0.08, ['=', 'D', '^']);
-  scatter(grid, 0, 0, W, H, 'T', 0.05, ['=', 'D', '^']);
+  scatter(grid, 0, 0, W, H, ',', 0.1, ['=', 'D', '^']);
+  scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', 'D', '^']);
 
   const legend = {
-    '.': { tile: () => rng.pick(['t_snow', 't_grass1']) }, ',': { tile: 't_grass1' },
-    '=': { tile: 't_road' }, 'D': { tile: 't_road', overlay: 'o_rock', danger: 0.12 },
-    'T': { tile: 't_grass0', overlay: 'o_tree', solid: true }, '^': { tile: 't_hillrock', solid: true },
+    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_snow0', 't_snow1', 't_grass1', 't_snow0']) },
+    ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_snow2']) },
+    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1']) },
+    'D': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road2']), overlay: 'o_rock', danger: 0.12 },
+    'T': { tile: 't_snow0', overlay: (tx,ty) => hashPick(tx,ty,['o_pine', 'o_pine', 'o_tree']), solid: true },
+    '^': { tile: 't_hillrock', solid: true },
   };
 
   function marker(p, sprite, label, promptText, onTrigger) {

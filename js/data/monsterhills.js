@@ -15,7 +15,7 @@ const MonsterHillsAnchors = {};
   MonsterHillsAnchors.node4 = { x: portalX, y: portalY };
 
   const rows = gridToRows(grid2.map(r => r.map(c => (c === '#' ? '#' : '.'))));
-  const legend = { '.': { tile: 't_snow' }, '#': { tile: 't_hillrock', solid: true } };
+  const legend = { '.': { tile: (tx, ty) => hashPick(tx, ty, ['t_snow0', 't_snow1', 't_snow2']) }, '#': { tile: 't_hillrock', solid: true } };
 
   function at(n) { return centers[n - 1]; }
   function node(n, opts) { return { x: at(n).x, y: at(n).y, ...opts }; }

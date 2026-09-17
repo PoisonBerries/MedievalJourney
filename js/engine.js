@@ -5,6 +5,15 @@
 // just corridor-shaped maps with event tiles placed at each numbered node.
 // ============================================================================
 
+function drawShadow(ctx, cx, footY, width) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(10,8,14,0.32)';
+  ctx.beginPath();
+  ctx.ellipse(cx, footY, width * 0.32, width * 0.11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 const Input = (() => {
   const keys = new Set();
   let mouse = { x: 0, y: 0, down: false, clickedThisFrame: false };
@@ -125,6 +134,11 @@ class GameEngine {
     requestAnimationFrame(this.loop);
   }
 
+  tryInteract() {
+    if (this.blocked || !this.area) return;
+    if (this.interactHint) this.triggerEntity(this.interactHint);
+  }
+
   update(dt) {
     const p = this.player, area = this.area;
     p.speed = 130 * (this.state.flags.royalSpeed ? 1.8 : this.state.flags.hasHorse ? 1.4 : 1);
@@ -209,7 +223,12 @@ class GameEngine {
         const leg = area.legendFor(ch);
         const key = typeof leg.tile === 'function' ? leg.tile(tx, ty) : leg.tile;
         drawSprite(ctx, key, tx * TILE - camX, ty * TILE - camY);
-        if (leg.overlay) drawSprite(ctx, leg.overlay, tx * TILE - camX, ty * TILE - camY);
+        if (leg.overlay) {
+          // tile-overlay props (trees/rocks/signs/etc) are pre-baked 32x32
+          // stamps with their own shadow already drawn into the sprite.
+          const ov = typeof leg.overlay === 'function' ? leg.overlay(tx, ty) : leg.overlay;
+          drawSprite(ctx, ov, tx * TILE - camX, ty * TILE - camY);
+        }
       }
     }
 
@@ -225,21 +244,26 @@ class GameEngine {
         continue;
       }
       const sx = e.x * TILE - camX, sy = e.y * TILE - camY;
-      if (sx < -TILE || sy < -TILE || sx > canvas.width + TILE || sy > canvas.height + TILE) continue;
-      const size = e.size || TILE;
-      drawSprite(ctx, e.sprite, sx + (TILE - size) / 2, sy + (TILE - size), size, size);
-      if (e.label) {
+      if (sx < -TILE * 2 || sy < -TILE * 2 || sx > canvas.width + TILE * 2 || sy > canvas.height + TILE * 2) continue;
+      const box = spriteBox(e.sprite);
+      const w = e.size || box.w, h = e.size ? e.size : box.h;
+      drawShadow(ctx, sx + TILE / 2, sy + TILE - 3, w);
+      drawSprite(ctx, e.sprite, sx + (TILE - w) / 2, sy + TILE - h, w, h);
+      const nearPlayer = Math.hypot(e.x * TILE + TILE / 2 - player.cx, e.y * TILE + TILE / 2 - player.cy) < TILE * 2.5;
+      if (e.label && nearPlayer && e !== this.interactHint) {
         ctx.font = '10px monospace';
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
-        ctx.fillText(e.label, sx + TILE / 2, sy - 4);
+        ctx.fillText(e.label, sx + TILE / 2, sy + TILE - h - 6);
       }
     }
 
     // interact prompt
     if (this.interactHint && !this.blocked) {
       const e = this.interactHint;
-      const sx = e.x * TILE - camX + TILE / 2, sy = e.y * TILE - camY - 14;
+      const eBox = spriteBox(e.sprite);
+      const eh = e.size || eBox.h;
+      const sx = e.x * TILE - camX + TILE / 2, sy = e.y * TILE - camY + TILE - eh - 8;
       ctx.font = 'bold 11px monospace';
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffe98a';
@@ -251,8 +275,11 @@ class GameEngine {
 
   renderPlayer() {
     const { ctx, camera, player: p } = this;
-    const sx = p.x - camera.x, sy = p.y - camera.y;
-    const bob = p.moving ? Math.sin(p.animT * 10) * 2 : 0;
-    drawSprite(this.ctx, 'player', sx - 4, sy - 8 + bob, TILE, TILE, p.facing === 'left');
+    const feetX = p.x - camera.x + p.w / 2, feetY = p.y - camera.y + p.h;
+    const bob = p.moving ? Math.sin(p.animT * 10) * 1.5 : 0;
+    const box = spriteBox('player_down');
+    const key = p.facing === 'up' ? 'player_up' : (p.facing === 'left' || p.facing === 'right') ? 'player_side' : 'player_down';
+    drawShadow(ctx, feetX, feetY - 2, box.w);
+    drawSprite(ctx, key, feetX - box.w / 2, feetY - box.h + bob, box.w, box.h, p.facing === 'left');
   }
 }

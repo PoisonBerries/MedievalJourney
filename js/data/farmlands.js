@@ -11,9 +11,9 @@
   scatter(grid, 1, 1, W - 2, H - 2, ',', 0.1);
 
   const legend = {
-    '.': { tile: () => rng.pick(['t_grass0', 't_grass1']) },
-    ',': { tile: 't_grass1' },
-    '=': { tile: 't_road' },
+    '.': { tile: (tx,ty) => hashPick(tx,ty,['t_grass0', 't_grass1', 't_grass3']) },
+    ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_grass2']) },
+    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1']) },
     'T': { tile: 't_grass0', overlay: 'o_tree', solid: true },
     '#': { tile: 't_hillrock', solid: true },
   };

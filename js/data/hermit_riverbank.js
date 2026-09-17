@@ -8,7 +8,7 @@
   frameRect(grid, 0, 0, W, H, 'T');
   fillRect(grid, 1, 1, W - 2, H - 2, '.');
 
-  const legend = { '.': { tile: 't_forest' }, 'T': { tile: 't_grass0', overlay: 'o_tree', solid: true } };
+  const legend = { '.': { tile: (tx,ty) => hashPick(tx,ty,['t_forest0', 't_forest1', 't_forest2']) }, 'T': { tile: 't_forest0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_pine', 'o_bush']), solid: true } };
 
   async function hermitVisit(engine) {
     const s = engine.state;

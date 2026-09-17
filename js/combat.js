@@ -113,12 +113,12 @@ const Combat = (() => {
                 <img src="${Sprites[f.sprite]?.toDataURL() || ''}"/>
                 <div class="foename">${f.name}</div>
                 <div class="hpbar"><div class="hpfill" style="width:${Math.max(0, 100 * f.hp / f.maxHp)}%"></div></div>
-                <div class="hptext">${Math.max(0, f.hp)}/${f.maxHp} ${f.range ? '🏹' : '⚔️'}</div>
+                <div class="hptext">${Math.max(0, f.hp)}/${f.maxHp} ${f.range ? '(ranged)' : '(melee)'}</div>
               </div>`).join('')}
           </div>
           <div class="player-status">
             <div class="hpbar big"><div class="hpfill" style="width:${100 * state.life / state.maxLife}%"></div></div>
-            <div class="hptext">You: ${state.life}/${state.maxLife} — wielding ${weapon.name} ${weapon.range ? '🏹' : '⚔️'}</div>
+            <div class="hptext">You: ${state.life}/${state.maxLife} — wielding ${weapon.name} ${weapon.range ? '(ranged)' : '(melee)'}</div>
           </div>
           <div class="combat-log">${log.map(l => `<div>${l}</div>`).join('')}</div>
           <div class="combat-actions">
@@ -134,7 +134,7 @@ const Combat = (() => {
         weaponOptions().forEach(w => {
           const b = document.createElement('button');
           b.className = 'choice-btn small' + (w.id === state.equippedWeapon ? ' active' : '');
-          b.textContent = w.name + (w.range ? ' 🏹' : ' ⚔️');
+          b.textContent = w.name + (w.range ? ' (ranged)' : ' (melee)');
           b.onclick = () => { state.equippedWeapon = w.id; render(); };
           wrow.appendChild(b);
         });
