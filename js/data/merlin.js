@@ -19,7 +19,7 @@
       onTrigger: (e, ent) => { ent._dead = true; UI.say('A rotting skeleton lies here, still wearing a tarnished crown. You leave it be. Some things are best undisturbed.'); } },
     { x: at(3).x, y: at(3).y, sprite: 'i_scroll', label: '', interact: true, promptText: '', blocking: false, autoTrigger: true,
       onTrigger: (engine, ent) => { ent._dead = true; const s = engine.state; if (GameState.hasItem(s, 'scrollKingsPassage') || GameState.hasItem(s, 'scrollQueensPassage')) { UI.say('A hidden current of magic sweeps you forward.'); engine.loadArea('merlin', at(4)); } } },
-    { x: at(5).x, y: at(5).y, sprite: 'e_crow', label: '', interact: true, promptText: '', blocking: false, autoTrigger: true,
+    { x: at(5).x, y: at(5).y, sprite: 'e_crow', label: '', interact: true, promptText: '', blocking: false, autoTrigger: true, forceEncounter: true,
       onTrigger: (engine, ent) => { ent._dead = true; const s = engine.state; if (GameState.hasItem(s, 'scrollKingsPassage') || GameState.hasItem(s, 'scrollQueensPassage')) Combat.start(s, Enemies.screechOwl()); } },
     { x: at(6).x, y: at(6).y, sprite: 'i_gem_blue', label: 'Crystal Ball', interact: true, promptText: 'gaze into it', blocking: false, autoTrigger: true,
       onTrigger: async (engine, ent) => {

@@ -27,6 +27,10 @@ const Dungeons = (() => {
       onTrigger: (eng, e) => { e._dead = true; const before = s.companions.length; s.companions = s.companions.filter(c => !c.id.startsWith('rat')); if (before !== s.companions.length) UI.notify('Rat poison! Your rat companions scatter and die.'); } });
     if (variant === 2 && spots.dollar) entities.push({ x: spots.dollar.x, y: spots.dollar.y, sprite: 'i_coin', label: 'Cache', interact: true, promptText: 'take quickels', blocking: false, autoTrigger: true,
       onTrigger: (eng, e) => { e._dead = true; GameState.addQ(s, 8); UI.notify('You find a stash of every transportation fee ever paid here: +8q!'); } });
+    // a rat swarm flanks both approaches to the exit along the bottom
+    // corridor, so however you looped the ring you can't reach it unfought.
+    [4, 6].forEach(gx => entities.push({ x: gx, y: 7, sprite: 'e_rat', label: 'Hostile Rats', interact: true, promptText: 'the path is blocked', blocking: true, autoTrigger: true, forceEncounter: true,
+      onTrigger: (eng, e) => { e._dead = true; Combat.start(s, foe('Hostile Rat Swarm', 'e_rat', 2, 5, false)); } }));
     entities.push({ x: spots.exit.x, y: spots.exit.y, sprite: 'o_sign', label: 'Exit', interact: true, promptText: 'climb out', blocking: false, autoTrigger: true,
       onTrigger: () => { UI.notify('You escape the dungeon!'); onExit(); } });
     Areas.dungeon_temp = { map: gridToRows(grid), legend, entities, entryPoint: spots.start };
@@ -100,7 +104,7 @@ async function castleEventRoll(engine) {
       onTrigger: async (engine, e) => { const s = engine.state; if (checkFn(s)) { e.blocking = false; e.interact = false; UI.notify('The door unlocks.'); } else await UI.say(failMsg); } };
   }
 
-  function enemyNode(x, y) { return { x, y, sprite: 'e_soldier', label: 'Trouble', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, onTrigger: (engine, e) => { e._dead = true; castleEnemyRoll(engine); } }; }
+  function enemyNode(x, y) { return { x, y, sprite: 'e_soldier', label: 'Trouble', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true, onTrigger: (engine, e) => { e._dead = true; castleEnemyRoll(engine); } }; }
   function eventNode(x, y) { return { x, y, sprite: 'i_scroll', label: 'Something Happening', interact: true, promptText: 'investigate', blocking: false, autoTrigger: true, onTrigger: (engine, e) => { e._dead = true; castleEventRoll(engine); } }; }
   function dungeonSpur(x, y) { return { x, y, sprite: 'o_well', label: 'Dark Stairwell', interact: true, promptText: 'descend', blocking: false, onTrigger: (engine) => Dungeons.enter(engine, () => engine.loadArea('castle', { x, y: y + 1 })) }; }
 

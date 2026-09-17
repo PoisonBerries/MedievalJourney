@@ -42,7 +42,7 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     '.': { tile: (tx,ty) => hashPick(tx,ty,['t_grass0', 't_grass0', 't_grass1', 't_grass2', 't_grass3', 't_grass4']) },
     ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_grass5']) },
     'f': { tile: (tx,ty) => hashPick(tx,ty,['t_grass2', 't_grass4', 't_grass5']), overlay: (tx,ty) => hashPick(tx,ty,['o_flowers0', 'o_flowers1', 'o_flowers2', 'o_tuft0']) },
-    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1', 't_road2']) },
+    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1', 't_road2']), danger: 0.035 },
     'T': { tile: 't_grass0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_tree', 'o_pine']), solid: true },
     '~': { tile: (tx,ty) => hashPick(tx,ty,['t_water0', 't_water1']), solid: true },
     's': { tile: 't_sand' },
@@ -84,5 +84,19 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     engine.loadArea('happytown', Areas.happytown.entryPoint);
   }
 
-  Areas.overworld_south = { map: gridToRows(grid), legend, entities };
+  const southernPool = [
+    () => foe('Wild Boar', 'e_pig', 2, 4, false),
+    () => foe('Hungry Crow', 'e_crow', 1, 3, false),
+    () => foe('Roadside Bandit', 'e_soldier', 2, 5, false),
+    () => foe('Startled Rat', 'e_rat', 1, 2, false),
+    () => foe('Grumpy Goose', 'e_chicken', 1, 3, true),
+  ];
+  const southernLoot = { q: [1, 4], itemChance: 0.15, items: [{ ...ItemDefs.healthPotion }, { ...ItemDefs.bread }, { ...ItemDefs.strengthPotion }] };
+  function onDanger(engine) {
+    const enemy = rng.pick(southernPool)();
+    enemy.lootTable = southernLoot;
+    Combat.start(engine.state, enemy);
+  }
+
+  Areas.overworld_south = { map: gridToRows(grid), legend, entities, onDanger };
 })();

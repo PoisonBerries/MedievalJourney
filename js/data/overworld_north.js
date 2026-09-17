@@ -30,11 +30,18 @@ const ONA = {
   scatter(grid, 0, 0, W, H, ',', 0.1, ['=', 'D', '^']);
   scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', 'D', '^']);
 
+  const roadLoot = { q: [2, 6], itemChance: 0.18, items: [{ ...ItemDefs.healthPotion }, { ...ItemDefs.grammaThings }] };
+  const difficultyLoot = { q: [4, 12], itemChance: 0.3, items: [{ ...ItemDefs.pie }, { ...ItemDefs.vanishingSmoke }, { ...ItemDefs.broom }] };
+  const roadPool = [() => foe('Wandering Wolf-Dog', 'e_rat', 2, 5, false), () => foe('Sneaky Goblin', 'e_goblin', 2, 6, false), () => foe('Icy Crow', 'e_crow', 1, 4, false)];
+  const dangerPool = [Enemies.rockThrower, Enemies.drunkCastlegoer, Enemies.goblinThief, Enemies.mamaBear, Enemies.centicore];
+  function onRoadDanger(engine) { const en = rng.pick(roadPool)(); en.lootTable = roadLoot; Combat.start(engine.state, en); }
+  function onDanger(engine) { const en = rng.pick(dangerPool)(); en.lootTable = difficultyLoot; Combat.start(engine.state, en); }
+
   const legend = {
     '.': { tile: (tx,ty) => hashPick(tx,ty,['t_snow0', 't_snow1', 't_grass1', 't_snow0']) },
     ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_snow2']) },
-    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1']) },
-    'D': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road2']), overlay: 'o_rock', danger: 0.12 },
+    '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1']), danger: 0.03, onDanger: onRoadDanger },
+    'D': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road2']), overlay: 'o_rock', danger: 0.12, onDanger },
     'T': { tile: 't_snow0', overlay: (tx,ty) => hashPick(tx,ty,['o_pine', 'o_pine', 'o_tree']), solid: true },
     '^': { tile: 't_hillrock', solid: true },
   };
@@ -42,9 +49,6 @@ const ONA = {
   function marker(p, sprite, label, promptText, onTrigger) {
     return { x: p.x, y: p.y, sprite, label, interact: true, promptText, blocking: true, onTrigger };
   }
-
-  const dangerPool = [Enemies.rockThrower, Enemies.drunkCastlegoer, Enemies.goblinThief, Enemies.mamaBear, Enemies.centicore];
-  function onDanger(engine) { Combat.start(engine.state, rng.pick(dangerPool)()); }
 
   const entities = [
     marker(A.monsterHills, 'o_castletower', 'Monster Hills', 'climb into the Monster Hills', (e) => e.loadArea('monsterhills', Areas.monsterhills.entryPoint)),

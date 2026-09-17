@@ -32,7 +32,7 @@
 
   // 2 — Frog-legged bears
   entities.push(node(2, {
-    sprite: 'e_frogbear', label: 'Frog-legged bears', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_frogbear', label: 'Frog-legged bears', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const roll = await UI.rollBanner(6);
@@ -86,7 +86,7 @@
 
   // 6 — Pack of bush monsters
   entities.push(node(6, {
-    sprite: 'e_bushmonster', label: 'Bush monsters', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_bushmonster', label: 'Bush monsters', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const res = await Combat.start(s, group(Enemies.bushMonster, Enemies.bushMonster, Enemies.bushMonster, Enemies.bushMonster));
@@ -96,7 +96,7 @@
 
   // 7 — Serpent's Den
   entities.push(node(7, {
-    sprite: 'e_serpent', label: "Serpent's Den", interact: true, promptText: 'enter den', blocking: true, autoTrigger: true,
+    sprite: 'e_serpent', label: "Serpent's Den", interact: true, promptText: 'enter den', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const ranged = rng.d6() >= 4;
@@ -166,19 +166,19 @@
 
   // 12 — Giant toad
   entities.push(node(12, {
-    sprite: 'e_toad', label: 'Giant Toad', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_toad', label: 'Giant Toad', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: (engine, e) => { e._dead = true; Combat.start(engine.state, Enemies.giantToad()); },
   }));
 
   // 13 — Flock of crows
   entities.push(node(13, {
-    sprite: 'e_crow', label: 'Flock of Crows', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_crow', label: 'Flock of Crows', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: (engine, e) => { e._dead = true; Combat.start(engine.state, Enemies.crows()); },
   }));
 
   // 14 — Fat tortoise + exit back to overworld
   entities.push(node(14, {
-    sprite: 'e_tortoise', label: 'Fat Tortoise', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_tortoise', label: 'Fat Tortoise', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true;
       const res = await Combat.start(engine.state, Enemies.tortoise());

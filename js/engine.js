@@ -141,6 +141,7 @@ class GameEngine {
 
   update(dt) {
     const p = this.player, area = this.area;
+    if (!area) return;
     p.speed = 130 * (this.state.flags.royalSpeed ? 1.8 : this.state.flags.hasHorse ? 1.4 : 1);
     let dx = 0, dy = 0;
     if (Input.down('w', 'arrowup')) dy -= 1;
@@ -167,7 +168,8 @@ class GameEngine {
       if (Math.random() < tileLeg.danger * dt) {
         this._dangerCooldown = true;
         setTimeout(() => { this._dangerCooldown = false; }, 4000);
-        if (area.def.onDanger) area.def.onDanger(this);
+        const handler = tileLeg.onDanger || area.def.onDanger;
+        if (handler) handler(this);
       }
     }
 
@@ -176,6 +178,12 @@ class GameEngine {
     this.interactHint = near.find(e => e.interact) || null;
     const stepOn = area.entities.find(e => !e._dead && e.autoTrigger && e.x === Math.floor(p.cx / TILE) && e.y === Math.floor(p.cy / TILE));
     if (stepOn) this.triggerEntity(stepOn);
+
+    // forced encounters (dungeon monsters) — triggers the instant you get
+    // close, whether or not you're centered on its tile, so there's no
+    // skirting around it through the rest of an open room.
+    const forceMonster = area.entities.find(e => !e._dead && e.forceEncounter && Math.hypot(e.x * TILE + TILE / 2 - p.cx, e.y * TILE + TILE / 2 - p.cy) < TILE * 1.15);
+    if (forceMonster) this.triggerEntity(forceMonster);
 
     if (Input.consumeClick() && this.interactHint) this.triggerEntity(this.interactHint);
 

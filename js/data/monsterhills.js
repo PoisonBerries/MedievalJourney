@@ -24,7 +24,7 @@ const MonsterHillsAnchors = {};
 
   // 1 — baby dragons
   entities.push(node(1, {
-    sprite: 'e_babydragon', label: 'Baby Dragons', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_babydragon', label: 'Baby Dragons', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const res = await Combat.start(s, group(Enemies.babyDragon, Enemies.babyDragon, Enemies.babyDragon));
@@ -34,7 +34,7 @@ const MonsterHillsAnchors = {};
 
   // 2 — sleeping ogre
   entities.push(node(2, {
-    sprite: 'e_ogre', label: 'Sleeping Ogre', interact: true, promptText: 'sneak closer', blocking: true, autoTrigger: true,
+    sprite: 'e_ogre', label: 'Sleeping Ogre', interact: true, promptText: 'sneak closer', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const roll = await UI.rollBanner(6);
@@ -47,7 +47,7 @@ const MonsterHillsAnchors = {};
 
   // 3 — giant
   entities.push(node(3, {
-    sprite: 'e_giant', label: 'Hill Giant', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_giant', label: 'Hill Giant', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       if (s.armor.boots) { await UI.say('Your boots let you slip past the giant unnoticed.'); return; }
@@ -67,7 +67,7 @@ const MonsterHillsAnchors = {};
 
   // 5 — Vegetable Lamb of Tartary
   entities.push(node(5, {
-    sprite: 'e_vegetablelamb', label: 'Vegetable Lamb of Tartary', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_vegetablelamb', label: 'Vegetable Lamb of Tartary', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const res = await Combat.start(s, Enemies.vegetableLamb());
@@ -95,7 +95,7 @@ const MonsterHillsAnchors = {};
 
   // 7 — Centicore
   entities.push(node(7, {
-    sprite: 'e_centicore', label: 'Centicore', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_centicore', label: 'Centicore', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const res = await Combat.start(s, Enemies.centicore());
@@ -105,7 +105,7 @@ const MonsterHillsAnchors = {};
 
   // 8 — Mama dragon
   entities.push(node(8, {
-    sprite: 'e_mamadragon', label: 'Mama Dragon', interact: true, promptText: 'approach', blocking: true, autoTrigger: true,
+    sprite: 'e_mamadragon', label: 'Mama Dragon', interact: true, promptText: 'approach', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const res = await Combat.start(s, Enemies.mamaDragon());
@@ -126,7 +126,7 @@ const MonsterHillsAnchors = {};
 
   // 10 — Snow dragon
   entities.push(node(10, {
-    sprite: 'e_snowdragon', label: 'Snow Dragon', interact: true, promptText: 'sneak toward the scroll', blocking: true, autoTrigger: true,
+    sprite: 'e_snowdragon', label: 'Snow Dragon', interact: true, promptText: 'sneak toward the scroll', blocking: true, autoTrigger: true, forceEncounter: true,
     onTrigger: async (engine, e) => {
       e._dead = true; const s = engine.state;
       const roll = await UI.rollBanner(6);
