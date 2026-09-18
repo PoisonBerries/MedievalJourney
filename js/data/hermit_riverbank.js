@@ -7,6 +7,7 @@
   const grid = blankGrid(W, H, '.');
   frameRect(grid, 0, 0, W, H, 'T');
   fillRect(grid, 1, 1, W - 2, H - 2, '.');
+  const exitGap = openBorderGap(grid, W - 3, H - 1, 2, true, '.');
 
   const legend = { '.': { tile: (tx,ty) => hashPick(tx,ty,['t_forest0', 't_forest1', 't_forest2']) }, 'T': { tile: 't_forest0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_pine', 'o_bush']), solid: true } };
 
@@ -35,7 +36,10 @@
   const entities = [
     { x: 6, y: 5, sprite: 'npc_hermit', label: 'Hermit', interact: true, promptText: 'visit', blocking: true, onTrigger: hermitVisit },
     { x: 9, y: 8, sprite: 'o_well', label: 'Cellar', interact: true, promptText: 'use cellar (15q)', blocking: false, onTrigger: hermitCellar },
-    { x: W - 3, y: H - 3, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x, y: exitGap[0].y - 1, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.hermitsHome.x, y: OSA.hermitsHome.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.hermitsHome.x, y: OSA.hermitsHome.y + 2 }) },
   ];
 
@@ -49,6 +53,7 @@
   frameRect(grid, 0, 0, W, H, '#');
   fillRect(grid, 1, 1, W - 2, 5, 's');
   fillRect(grid, 1, 6, W - 2, H - 7, '~');
+  const exitGap = openBorderGap(grid, W - 1, 2, 2, false, 's');
 
   const legend = {
     's': { tile: 't_sand' }, '~': { tile: 't_water0', solid: true, water: true },
@@ -83,7 +88,10 @@
   const entities = [
     { x: 4, y: 3, sprite: 'o_sign', label: 'Path of the Knight', interact: true, promptText: 'read sign', blocking: false, onTrigger: riverbankSign },
     { x: 10, y: 3, sprite: 'i_fish', label: 'Fishing Spot', interact: true, promptText: 'fish', blocking: false, onTrigger: fishingHole },
-    { x: W - 3, y: 3, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x - 1, y: exitGap[0].y, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.riverbank.x, y: OSA.riverbank.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.riverbank.x, y: OSA.riverbank.y + 2 }) },
   ];
 

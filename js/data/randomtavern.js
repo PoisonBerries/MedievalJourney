@@ -6,6 +6,8 @@
   const grid = blankGrid(W, H, 't');
   frameRect(grid, 0, 0, W, H, '#');
   fillRect(grid, 1, 1, W - 2, H - 2, 't');
+  // a real doorway out, not just a sign against a solid wall
+  const exitGap = openBorderGap(grid, W - 3, H - 1, 2, true, 't');
 
   const legend = { 't': { tile: 't_wood' }, '#': { tile: 't_stonefloor', solid: true } };
 
@@ -45,7 +47,10 @@
   const entities = [
     { x: 5, y: 5, sprite: 'npc_larry', label: 'Gamble', interact: true, promptText: 'gamble', blocking: true, onTrigger: gamble },
     { x: 10, y: 5, sprite: 'npc_bartender', label: 'Have a Drink', interact: true, promptText: 'order a drink', blocking: true, onTrigger: haveADrink },
-    { x: W - 3, y: H - 3, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x, y: exitGap[0].y - 1, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.randomTavern.x, y: OSA.randomTavern.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.randomTavern.x, y: OSA.randomTavern.y + 2 }) },
   ];
 

@@ -7,6 +7,7 @@
   const grid = blankGrid(W, H, 's');
   frameRect(grid, 0, 0, W, H, '#');
   fillRect(grid, 6, 0, 4, 3, '#'); // gatehouse towers flavor
+  const exitGap = openBorderGap(grid, 7, H - 1, 2, true, 's');
 
   const legend = { 's': { tile: 't_stonepath' }, '#': { tile: 'o_castlewall', solid: true } };
 
@@ -45,7 +46,10 @@
 
   const entities = [
     { x: 8, y: 4, sprite: 'npc_guard', label: 'The Gate', interact: true, promptText: 'approach the gate', blocking: true, onTrigger: gateEncounter },
-    { x: 8, y: H - 2, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'go back south', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x, y: exitGap[0].y - 1, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'go back south', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.gate.x, y: OSA.gate.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.gate.x, y: OSA.gate.y + 2 }) },
   ];
 

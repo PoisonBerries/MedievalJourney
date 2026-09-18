@@ -9,6 +9,11 @@
   fillRect(grid, 2, 8, W - 4, 3, '=');
   scatter(grid, 1, 1, W - 2, H - 2, ',', 0.06);
 
+  // the way out: the road visibly continues south and breaks through the
+  // treeline instead of just ending at a sign in an open field.
+  carveRoad(grid, 19, 10, 19, H - 2, '=');
+  const exitGap = openBorderGap(grid, 19, H - 1, 2, true, '=');
+
   const legend = {
     '.': { tile: (tx,ty) => hashPick(tx,ty,['t_grass0', 't_grass0', 't_grass1', 't_grass2', 't_grass4']) },
     ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_grass5']) },
@@ -66,7 +71,10 @@
       onTrigger: (engine) => horaceScript(engine),
     },
     { x: 11, y: 15, sprite: 'o_sign', label: '', interact: true, promptText: 'read sign', blocking: false, onTrigger: () => UI.say('A weathered sign points south: "Poor Country — work your way up."', { speaker: 'Sign' }) },
-    { x: W - 3, y: H - 3, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave town', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x, y: exitGap[0].y - 1, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave town', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', label: '', interact: false, promptText: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.happyTown.x, y: OSA.happyTown.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', label: '', interact: false, promptText: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.happyTown.x, y: OSA.happyTown.y + 2 }) },
   ];
 

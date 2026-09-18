@@ -39,6 +39,21 @@ function scatter(grid, x, y, w, h, ch, density = 0.08, avoid = ['=', '~']) {
   }
 }
 
+// opens a gap of width w in a border wall/treeline and returns the gap's
+// tile positions — used so leaving a map reads as "the path continues past
+// the edge of the screen" instead of walking up to a sign in a random spot.
+// vertical=true -> gap runs horizontally (breaking a TOP/BOTTOM border row);
+// vertical=false -> gap runs vertically (breaking a LEFT/RIGHT border column).
+function openBorderGap(grid, x, y, w, vertical, ch = '=') {
+  const spots = [];
+  for (let i = 0; i < w; i++) {
+    const gx = vertical ? x + i : x, gy = vertical ? y : y + i;
+    setAt(grid, gx, gy, ch);
+    spots.push({ x: gx, y: gy });
+  }
+  return spots;
+}
+
 // stamps a small paved "threshold" patch at a point-of-interest marker so
 // the ground itself signals "this is a place you enter", not just the icon
 // standing on it — then returns two flanking positions for gatepost props.

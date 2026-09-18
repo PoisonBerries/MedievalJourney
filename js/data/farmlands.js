@@ -9,6 +9,8 @@
   fillRect(grid, 1, 1, W - 2, H - 2, '.');
   fillRect(grid, 2, 8, W - 4, 2, '=');
   scatter(grid, 1, 1, W - 2, H - 2, ',', 0.1);
+  carveRoad(grid, 19, 9, 19, H - 2, '=');
+  const exitGap = openBorderGap(grid, 19, H - 1, 2, true, '=');
 
   const legend = {
     '.': { tile: (tx,ty) => hashPick(tx,ty,['t_grass0', 't_grass1', 't_grass3']) },
@@ -76,7 +78,10 @@
     { x: 11, y: 4, sprite: 'o_sign', label: 'Wheat Industry', interact: true, promptText: 'work the wheat', blocking: false, onTrigger: wheat },
     { x: 16, y: 4, sprite: 'o_sign', label: 'Corn Industry', interact: true, promptText: 'work the corn', blocking: false, onTrigger: corn },
     { x: 11, y: 13, sprite: 'npc_gramma', label: "Mabel's Mustard Plantation", interact: true, promptText: 'talk to Mabel', blocking: true, onTrigger: mustard },
-    { x: W - 3, y: H - 3, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false, autoTrigger: true,
+    { x: exitGap[0].x, y: exitGap[0].y - 1, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave', blocking: false },
+    { x: exitGap[0].x, y: exitGap[0].y, sprite: '', blocking: false, autoTrigger: true,
+      onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.farmlands.x, y: OSA.farmlands.y + 2 }) },
+    { x: exitGap[1].x, y: exitGap[1].y, sprite: '', blocking: false, autoTrigger: true,
       onTrigger: (engine) => engine.loadArea('overworld_south', { x: OSA.farmlands.x, y: OSA.farmlands.y + 2 }) },
   ];
 
