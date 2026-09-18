@@ -44,7 +44,7 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     'f': { tile: (tx,ty) => hashPick(tx,ty,['t_grass2', 't_grass4', 't_grass5']), overlay: (tx,ty) => hashPick(tx,ty,['o_flowers0', 'o_flowers1', 'o_flowers2', 'o_tuft0']), danger: 0.018 },
     '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1', 't_road2']), danger: 0.035 },
     'T': { tile: 't_grass0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_tree', 'o_pine']), solid: true },
-    '~': { tile: (tx,ty) => hashPick(tx,ty,['t_water0', 't_water1']), solid: true },
+    '~': { tile: (tx,ty) => hashPick(tx,ty,['t_water0', 't_water1']), solid: true, water: true },
     's': { tile: 't_sand' },
     '#': { tile: 't_hillrock', solid: true },
   };

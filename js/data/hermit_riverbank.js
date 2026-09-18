@@ -51,7 +51,7 @@
   fillRect(grid, 1, 6, W - 2, H - 7, '~');
 
   const legend = {
-    's': { tile: 't_sand' }, '~': { tile: 't_water0', solid: false }, // shallow crossing point, gated by script below
+    's': { tile: 't_sand' }, '~': { tile: 't_water0', solid: true, water: true },
     '#': { tile: 't_hillrock', solid: true },
   };
 

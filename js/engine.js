@@ -64,10 +64,15 @@ class AreaMap {
     return this.rows[ty][tx];
   }
   legendFor(ch) { return this.def.legend[ch] || this.def.legend['.']; }
-  isSolid(tx, ty) {
+  isWater(tx, ty) {
+    const leg = this.legendFor(this.tileAt(tx, ty));
+    return !!(leg && leg.water);
+  }
+  isSolid(tx, ty, hasBoat) {
     const ch = this.tileAt(tx, ty);
     if (ch === '#') return true;
     const leg = this.legendFor(ch);
+    if (leg && leg.water) return !hasBoat;
     return !!(leg && leg.solid);
   }
   entitiesNear(px, py, range = TILE * 1.1) {
@@ -199,10 +204,11 @@ class GameEngine {
     const testX = nx, testY = ny;
     const left = Math.floor((testX + 4) / TILE), right = Math.floor((testX + p.w - 4) / TILE);
     const top = Math.floor((testY + p.h * 0.5) / TILE), bottom = Math.floor((testY + p.h - 2) / TILE);
+    const hasBoat = !!this.state.flags.hasBoat;
     let collide = false;
     for (const tx of [left, right]) {
       for (const ty of [top, bottom]) {
-        if (area.isSolid(tx, ty)) collide = true;
+        if (area.isSolid(tx, ty, hasBoat)) collide = true;
         if (area.entityBlocking(tx, ty)) collide = true;
       }
     }
@@ -285,9 +291,11 @@ class GameEngine {
     const { ctx, camera, player: p } = this;
     const feetX = p.x - camera.x + p.w / 2, feetY = p.y - camera.y + p.h;
     const bob = p.moving ? Math.sin(p.animT * 10) * 1.5 : 0;
-    const box = spriteBox('player_down');
-    const key = p.facing === 'up' ? 'player_up' : (p.facing === 'left' || p.facing === 'right') ? 'player_side' : 'player_down';
+    const onWater = this.area.isWater(Math.floor(p.cx / TILE), Math.floor(p.cy / TILE));
+    const inBoat = onWater && this.state.flags.hasBoat;
+    const key = inBoat ? 'player_boat' : p.facing === 'up' ? 'player_up' : (p.facing === 'left' || p.facing === 'right') ? 'player_side' : 'player_down';
+    const box = spriteBox(key);
     drawShadow(ctx, feetX, feetY - 2, box.w);
-    drawSprite(ctx, key, feetX - box.w / 2, feetY - box.h + bob, box.w, box.h, p.facing === 'left');
+    drawSprite(ctx, key, feetX - box.w / 2, feetY - box.h + bob, box.w, box.h, !inBoat && p.facing === 'left');
   }
 }

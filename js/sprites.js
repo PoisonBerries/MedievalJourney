@@ -15,6 +15,7 @@ const BLDG_W = 64, BLDG_H = 64;
 // oversized sprites at their feet/base instead of squashing them into 32x32)
 function spriteBox(key) {
   if (!key) return { w: TILE, h: TILE };
+  if (key === 'player_boat') return { w: 56, h: CHAR_H };
   if (key.startsWith('player') || key.startsWith('npc_') || key.startsWith('e_')) return { w: CHAR_W, h: CHAR_H };
   if (key.startsWith('b_')) return { w: BLDG_W, h: BLDG_H };
   if (key === 'o_castletower' || key === 'o_snowyhill' || key === 'o_gatehouse') return { w: BLDG_W, h: BLDG_H };
@@ -357,6 +358,38 @@ function drawHumanoid(grid, H, o, viewMode = 'front') {
   H.outlineSilhouette(grid, PAL.outline);
 }
 
+function drawPlayerInBoat(grid, H, o) {
+  const skin = o.skin || PAL.skin1, skinLo = o.skinLo || PAL.skin2, hair = o.hair || PAL.hairBrown,
+        shirt = o.shirt || PAL.cloth_blue, shirtLo = o.shirtLo || PAL.cloth_blue, hairStyle = o.hairStyle || 'short';
+  const cx = 28;
+
+  // rowboat hull (replaces legs/feet — sitting, not standing)
+  H.ellipse(grid, cx, 44, 24, 9, PAL.wood1);
+  H.ellipse(grid, cx, 41, 19, 6, PAL.wood2);
+  H.line(grid, cx - 24, 44, cx + 24, 44, PAL.woodLo);
+  H.line(grid, cx - 20, 41, cx - 27, 37, PAL.wood2);
+  H.line(grid, cx + 20, 41, cx + 27, 37, PAL.wood2);
+
+  // torso (seated — shorter than the standing pose)
+  H.rect(grid, cx - 9, 24, 18, 12, shirt);
+  H.rect(grid, cx - 9, 24, 4, 12, shirtLo);
+  H.rect(grid, cx - 9, 24, 18, 2, o.shirtHi || PAL.cloth_white);
+
+  // arms
+  H.rect(grid, cx - 13, 25, 5, 9, skinLo); H.rect(grid, cx + 8, 25, 5, 9, skin);
+
+  // head (front-facing bust)
+  H.circle(grid, cx, 13, 10, skin);
+  H.circle(grid, cx - 4, 15, 3, skinLo);
+  H.set(grid, cx - 3, 12, PAL.outline); H.set(grid, cx + 3, 12, PAL.outline);
+  H.rect(grid, cx - 2, 17, 4, 1, o.mouth || PAL.skin3);
+  if (hairStyle === 'short') { H.rect(grid, cx - 9, 4, 18, 6, hair); H.rect(grid, cx - 10, 6, 3, 9, hair); H.rect(grid, cx + 7, 6, 3, 9, hair); }
+  if (hairStyle === 'long') { H.rect(grid, cx - 9, 4, 18, 6, hair); H.rect(grid, cx - 11, 8, 4, 16, hair); H.rect(grid, cx + 7, 8, 4, 16, hair); }
+  if (hairStyle === 'bald') { H.rect(grid, cx - 8, 5, 16, 3, hair); }
+
+  H.outlineSilhouette(grid, PAL.outline);
+}
+
 // ------------------------------------------------------------ CREATURES ---
 // composed within the 40x52 box but drawn compact & low, near the feet.
 function drawQuadruped(grid, H, body, belly, bodyHi) {
@@ -573,6 +606,7 @@ function initSprites() {
   reg('player_down', 40, 52, (g, H) => drawHumanoid(g, H, playerOpts, 'front'), 1);
   reg('player_up', 40, 52, (g, H) => drawHumanoid(g, H, playerOpts, 'back'), 1);
   reg('player_side', 40, 52, (g, H) => drawHumanoid(g, H, playerOpts, 'side'), 1);
+  reg('player_boat', 56, 52, (g, H) => drawPlayerInBoat(g, H, playerOpts), 1);
 
   // villagers / NPCs (front view only)
   const npc = (key, opts) => reg(key, 40, 52, (g, H) => drawHumanoid(g, H, opts, 'front'), 1);
