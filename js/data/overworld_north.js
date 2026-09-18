@@ -27,7 +27,10 @@ const ONA = {
   }
   blob(grid, 8, 18, 5, '^'); // hills border with a gap for the entrance
   fillRect(grid, A.monsterHills.x - 1, A.monsterHills.y - 1, 3, 3, 'P');
-  setAt(grid, A.monsterHills.x - 1, A.monsterHills.y + 1, '='); setAt(grid, A.monsterHills.x, A.monsterHills.y + 2, '=');
+  // the exit sign inside Monster Hills spawns you back out 2 tiles south of
+  // this anchor — make sure that whole strip is open ground on every side,
+  // not just a single-tile nub, or you land boxed in by solid rock.
+  fillRect(grid, A.monsterHills.x - 1, A.monsterHills.y, 3, 3, '=');
   scatter(grid, 0, 0, W, H, ',', 0.1, ['=', 'D', '^']);
   scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', 'D', '^']);
 
