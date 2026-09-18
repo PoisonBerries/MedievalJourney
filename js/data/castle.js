@@ -22,7 +22,7 @@ const Dungeons = (() => {
     const legend = { '.': { tile: 't_stonefloor' }, '#': { tile: 'o_castlewall', solid: true } };
     const entities = [];
     rats.forEach(k => entities.push({ x: spots[k].x, y: spots[k].y, sprite: 'e_rat', label: 'Rat', interact: true, promptText: 'catch rat', blocking: false, autoTrigger: true,
-      onTrigger: (eng, e) => { e._dead = true; s.companions.push({ id: 'rat' + k, name: 'Rat' }); UI.notify('A rat companion joins you! (1/1)'); } }));
+      onTrigger: (eng, e) => { e._dead = true; s.companions.push({ id: 'rat' + k, name: 'Rat', dmg: 1, range: false }); UI.notify('A rat companion joins you! (1/1, and it bites)'); } }));
     entities.push({ x: spots.p.x, y: spots.p.y, sprite: 'e_rat', label: 'Rat Poison', interact: true, promptText: '...', blocking: false, autoTrigger: true,
       onTrigger: (eng, e) => { e._dead = true; const before = s.companions.length; s.companions = s.companions.filter(c => !c.id.startsWith('rat')); if (before !== s.companions.length) UI.notify('Rat poison! Your rat companions scatter and die.'); } });
     if (variant === 2 && spots.dollar) entities.push({ x: spots.dollar.x, y: spots.dollar.y, sprite: 'i_coin', label: 'Cache', interact: true, promptText: 'take quickels', blocking: false, autoTrigger: true,
@@ -49,7 +49,7 @@ async function castleEnemyRoll(engine) {
   } else if (roll === 2) await Combat.start(s, Enemies.rockThrower());
   else if (roll === 3) await Combat.start(s, Enemies.drunkCastlegoer());
   else if (roll === 4) await Combat.start(s, Enemies.peasantMob());
-  else if (roll === 5) { const res = await Combat.start(s, Enemies.ghost()); if (res.result !== 'win') await UI.stun(3000, 'The ghost\'s wail costs you time — you lose several turns.'); }
+  else if (roll === 5) { const res = await Combat.start(s, Enemies.ghost()); if (res.result !== 'win') await UI.stun(3000, "The ghost's wail costs you time — you're dazed for a while."); }
   else await Combat.start(s, Enemies.looseMoose());
 }
 
@@ -63,7 +63,7 @@ async function castleEventRoll(engine) {
     GameState.addLife(s, -3 - s.companions.filter(c => c.id.startsWith('rat')).length);
     await UI.say('The Plague sweeps through! -3 life (and 1 more per rat companion).');
   } else if (roll === 3) {
-    if (rng.d6() % 2 === 1) { GameState.addLife(s, 1); await UI.say('Cranberry Festival! Everyone gains 1 life.'); }
+    if (rng.d6() % 2 === 1) { GameState.addLife(s, 1); await UI.say('Cranberry Festival! You gain 1 life from the free cider.'); }
     else { GameState.addItem(s, { id: 'festArrow', name: 'Festival Arrow', icon: 'i_arrow_flame', combatUse: (st, ctx) => { const t = ctx.foes.find(f => f.hp > 0); if (t) { t.hp -= 12; ctx.pushLog(`Festival arrow deals 12 to ${t.name}!`); } } }); await UI.say('Cranberry Festival! You win 2 twelve-damage festival arrows.'); }
   } else if (roll === 4) {
     const sub = rng.d6();

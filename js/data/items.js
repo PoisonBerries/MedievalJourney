@@ -21,7 +21,7 @@ const Armors = {
   helmet: { slot: 'helmet', id: 'helmet', name: 'Helmet', rangedReduction: 1, icon: 'i_helmet' },
   chainmail: { slot: 'chest', id: 'chainmail', name: 'Chainmail', meleeReduction: 1, icon: 'i_chest' },
   fullArmor: { slot: 'chest', id: 'fullArmor', name: 'Full Armor', anyReduction: 3, icon: 'i_chest' },
-  boots: { slot: 'boots', id: 'boots', name: 'Boots', sneakReroll: true, icon: 'i_boots' },
+  boots: { slot: 'boots', id: 'boots', name: 'Boots', icon: 'i_boots' },
   arthurHelmet: { slot: 'helmet', id: 'arthurHelmet', name: "Arthur's Helmet", rangedReduction: 3, icon: 'i_helmet_gold' },
   arthurChest: { slot: 'chest', id: 'arthurChest', name: "Arthur's Chestplate", meleeReduction: 3, icon: 'i_chest_gold' },
 };
@@ -48,9 +48,9 @@ const ItemDefs = {
   scrollQueensPassage: { id: 'scrollQueensPassage', name: "Queen's Note of Passage", icon: 'i_scroll', desc: 'Proof you may take the Path of the Queen' },
   hilt: { id: 'hilt', name: 'Bladeless Hilt', icon: 'i_hilt', desc: 'A sword hilt with an empty gem socket' },
   boat: { id: 'boat', name: 'Boat', icon: 'i_boat', desc: 'Lets you cross deep water' },
-  horse: { id: 'horse', name: 'Horse', icon: 'i_horse', desc: 'Move up to 2 spaces per turn' },
+  horse: { id: 'horse', name: 'Horse', icon: 'i_horse', desc: 'Move noticeably faster on foot' },
   key: { id: 'key', name: 'Key', icon: 'i_key', desc: 'Unlocks locked things' },
-  pig: { id: 'pig', name: 'Pig Companion', icon: 'e_pig', desc: 'Can be eaten for 3 life at any time', combatUse: (s, ctx) => { GameState.addLife(s, 3); ctx.pushLog('You eat your loyal pig. +3 life. (grim, but effective)'); } },
+  pig: { id: 'pig', name: 'Pig Companion', icon: 'e_pig', desc: 'Can be eaten for 3 life at any time', combatUse: (s, ctx) => { s.companions = s.companions.filter(c => c.id !== 'pig'); GameState.addLife(s, 3); ctx.pushLog('You eat your loyal pig. +3 life. (grim, but effective — and it stops fighting for you, obviously)'); } },
 };
 
 function grantWeapon(state, wid) {

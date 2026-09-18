@@ -21,7 +21,7 @@ const Enemies = {
   cub: () => foe('Bear Cub', 'e_cub', 1, 2, true),
   serpentMelee: () => foe('Serpent', 'e_serpent', 3, 6, false),
   serpentRanged: () => foe('Venomous Serpent', 'e_serpent', 2, 9, true),
-  giantToad: () => foe('Giant Toad', 'e_toad', 8, 8, true, { note: 'ranged by its tongue' }),
+  giantToad: () => foe('Giant Toad', 'e_toad', 8, 8, true), // ranged via its tongue
   crows: () => foe('Flock of Crows', 'e_crow', 1, 10, false),
   tortoise: () => foe('Fat Tortoise', 'e_tortoise', 5, 15, false, { canFlee: false }),
   shark: () => foe('Shark', 'e_shark', 5, 10, false),
@@ -40,8 +40,8 @@ const Enemies = {
   drunkCastlegoer: () => foe('Drunken Castlegoer', 'e_soldier', 5, 9, false),
   looseMoose: () => foe('Juice Moose on the Loose', 'e_moose', 7, 10, true),
   goblinThief: () => foe('Goblin Thief', 'e_goblin', 6, 12, false),
-  king: () => foe('The King', 'npc_king', 5, 20, true, { canFlee: false, note: 'brings 1000 1/3 soldiers to the fight in spirit' }),
-  queen: () => foe('The Queen', 'npc_queen', 7, 20, false, { canFlee: false, note: 'enchanted bow deals 7 divisible damage at the start of her turn' }),
+  king: () => foe('The King', 'npc_king', 5, 20, true, { canFlee: false }), // castle.js narrates his "army in spirit" before the fight
+  queen: () => foe('The Queen', 'npc_queen', 7, 20, false, { canFlee: false }), // castle.js applies her opening 7-damage volley before combat starts
   knightMacintosh: () => foe('Sir Macintosh', 'npc_knight', 15, 15, true, { canFlee: false }),
 };
 

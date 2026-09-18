@@ -26,7 +26,7 @@
     const go = await UI.choice('Work the bean farm for 2q?', [{ label: 'Pay 2q and work', value: true }, { label: 'Not now', value: false }]);
     if (!go) return;
     if (!GameState.spendQ(s, 2)) { UI.notify('Not enough quickels!'); return; }
-    await UI.say('Two turns pass tending the bean rows...');
+    await UI.say('A couple of days pass tending the bean rows...');
     const roll = await UI.rollBanner(6);
     if (roll <= 2) await UI.say('Drought! Your beans die in the field. Jeremiah shrugs apologetically.');
     else if (roll <= 4) { GameState.addQ(s, 10); await UI.say('Plentiful beans! Jeremiah pays you 10q.'); }
@@ -37,10 +37,10 @@
   async function wheat(engine) {
     const s = engine.state;
     await UI.say('Wheat Industry: pay 1q to get started.', { speaker: 'Sign' });
-    const go = await UI.choice('Pay 1q and farm wheat (3 turns)?', [{ label: 'Yes', value: true }, { label: 'No', value: false }]);
+    const go = await UI.choice('Pay 1q and farm wheat (a few days)?', [{ label: 'Yes', value: true }, { label: 'No', value: false }]);
     if (!go) return;
     if (!GameState.spendQ(s, 1)) { UI.notify('Not enough quickels!'); return; }
-    await UI.say('Three turns of wheat farming pass...');
+    await UI.say('A few days of wheat farming pass...');
     const roll = await UI.rollBanner(6);
     if (roll === 1) { GameState.addQ(s, 5); await UI.say('Bad season, but you still scrape together 5q.'); }
     else if (roll === 2) { GameState.addQ(s, 3); await UI.say('An ok season. 3q.'); }
@@ -51,22 +51,22 @@
 
   async function corn(engine) {
     const s = engine.state;
-    await UI.say('Corn Industry: 2q to start, 5q back after 7 turns.', { speaker: 'Sign' });
+    await UI.say('Corn Industry: 2q to start, 5q back after a week.', { speaker: 'Sign' });
     const go = await UI.choice('Invest 2q in corn?', [{ label: 'Yes', value: true }, { label: 'No', value: false }]);
     if (!go) return;
     if (!GameState.spendQ(s, 2)) { UI.notify('Not enough quickels!'); return; }
-    await UI.say('Seven turns pass tending the cornfield...');
+    await UI.say('A full week passes tending the cornfield...');
     GameState.addQ(s, 5);
     await UI.say('The corn sells well. +5q.');
   }
 
   async function mustard(engine) {
     const s = engine.state;
-    await UI.say('"Pay 10q, 10 turns — same odds as wheat but four times the value!" — Mabel', { speaker: 'Mabel' });
+    await UI.say('"Pay 10q, two weeks of work — same odds as wheat but four times the value!" — Mabel', { speaker: 'Mabel' });
     const go = await UI.choice('Invest 10q in mustard?', [{ label: 'Yes', value: true }, { label: 'No', value: false }]);
     if (!go) return;
     if (!GameState.spendQ(s, 10)) { UI.notify('Not enough quickels!'); return; }
-    await UI.say('Ten long turns of mustard farming pass...');
+    await UI.say('Two long weeks of mustard farming pass...');
     const roll = await UI.rollBanner(6);
     const table = { 1: 20, 2: 12, 3: 16, 4: 40, 5: 40 };
     if (table[roll]) { GameState.addQ(s, table[roll]); await UI.say(`The mustard sells for ${table[roll]}q!`); }

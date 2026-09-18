@@ -78,10 +78,27 @@
     },
   }));
 
-  // 5 — Lovin' Larry's
+  // 5 — Lovin' Larry's. The original was a two-player co-op bit (split a
+  // 10q potion, fall in love, move and fight as one for 10 turns) that has
+  // no solo equivalent — "come back with a friend" would just be a dead
+  // NPC forever if you're playing alone. Since you might genuinely have a
+  // companion by now, Larry counts that: bonding with it for real gives a
+  // lasting damage bump to everything it does at your side.
   entities.push(node(5, {
     sprite: 'npc_larry', label: "Lovin' Larry's", interact: true, promptText: 'talk to Larry', blocking: true,
-    onTrigger: async () => { await UI.say('"Aw, all alone? Come back with a friend sometime." — Larry looks you up and down, unimpressed.', { speaker: 'Larry' }); },
+    onTrigger: async (engine) => {
+      const s = engine.state;
+      if (s.flags.bondedCompanion) { await UI.say('"You two are still going strong, huh?" — Larry gives a knowing smile.', { speaker: 'Larry' }); return; }
+      if (!s.companions.length) { await UI.say('"Aw, all alone? Come back with a friend sometime." — Larry looks you up and down, unimpressed.', { speaker: 'Larry' }); return; }
+      const buddy = s.companions[0];
+      await UI.say(`"Oh, you brought someone! ${buddy.name} counts." — Larry slides over a mysterious potion. "10q, since there's no one to split it with."`, { speaker: 'Larry' });
+      const go = await UI.choice('Buy the potion for 10q?', [{ label: 'Pay 10q', value: true }, { label: 'No thanks', value: false }]);
+      if (!go) return;
+      if (!GameState.spendQ(s, 10)) { UI.notify('Not enough quickels!'); return; }
+      await UI.say(`You and ${buddy.name} drink it, look at each other, and... yeah, that's happening now.`);
+      s.flags.bondedCompanion = true;
+      await UI.say(`${buddy.name} fights harder at your side from now on. (+2 damage on every companion strike)`);
+    },
   }));
 
   // 6 — Pack of bush monsters
@@ -182,7 +199,7 @@
     onTrigger: async (engine, e) => {
       e._dead = true;
       const res = await Combat.start(engine.state, Enemies.tortoise());
-      if (res.result !== 'win') await UI.stun(1500, 'The tortoise blocks the path — you miss a turn catching your breath.');
+      if (res.result !== 'win') await UI.stun(1500, 'The tortoise blocks the path — you stop to catch your breath.');
     },
   }));
   entities.push({ x: at(1).x - 2, y: at(1).y, sprite: 'o_sign', label: 'To Overworld', interact: true, promptText: 'leave the Woods', blocking: false, autoTrigger: true,

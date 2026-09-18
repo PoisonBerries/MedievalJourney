@@ -25,7 +25,7 @@
       { name: 'Helmet', cost: 5, icon: 'i_helmet', desc: 'Take 1 less damage from ranged attacks', canBuy: s => !s.armor.helmet, blockedMsg: 'One helmet at a time!', onBuy: s => grantArmor(s, 'helmet') },
       { name: 'Chainmail', cost: 5, icon: 'i_chest', desc: 'Take 1 less non-ranged damage', canBuy: s => !s.armor.chest, blockedMsg: 'One chest piece at a time!', onBuy: s => grantArmor(s, 'chainmail') },
       { name: 'Full Armor', cost: 15, icon: 'i_chest', desc: 'Take 3 less damage in any combat', canBuy: s => !s.armor.chest, blockedMsg: 'One chest piece at a time!', onBuy: s => grantArmor(s, 'fullArmor') },
-      { name: 'Boots', cost: 5, icon: 'i_boots', desc: 'Re-roll once when sneaking around', canBuy: s => !s.armor.boots, blockedMsg: 'One pair of boots at a time!', onBuy: s => grantArmor(s, 'boots') },
+      { name: 'Boots', cost: 5, icon: 'i_boots', desc: 'Guarantees you slip past certain guards and obstacles unnoticed', canBuy: s => !s.armor.boots, blockedMsg: 'One pair of boots at a time!', onBuy: s => grantArmor(s, 'boots') },
     ],
   };
 

@@ -105,7 +105,8 @@ const Combat = (() => {
           if (!c.dmg || c.id === 'sirGus') return;
           const target = currentTarget();
           if (!target) return;
-          const dmg = withVariance(c.dmg);
+          let dmg = withVariance(c.dmg);
+          if (state.flags.bondedCompanion) dmg += 2;
           target.hp -= dmg;
           pushLog(`${c.name} strikes ${target.name} for ${dmg}!`);
           if (target.hp <= 0) pushLog(`${target.name} is defeated!`);

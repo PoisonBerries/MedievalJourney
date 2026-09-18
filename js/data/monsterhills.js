@@ -86,7 +86,7 @@ const MonsterHillsAnchors = {};
       e._dead = true; const s = engine.state;
       const roll = await UI.rollBanner(6);
       if (roll === 1) { GameState.spendQ(s, Math.min(s.q, 1)); await UI.say('You stumble and 1q falls out of your pocket, lost forever.'); }
-      else if (roll === 2) { s.companions.push({ id: 'pig', name: 'Pig' }); GameState.addItem(s, { ...ItemDefs.pig }); await UI.say('You find a 1/1 pig! It likes you. (can be eaten for 3 life anytime)'); }
+      else if (roll === 2) { s.companions.push({ id: 'pig', name: 'Pig', dmg: 1, range: false }); GameState.addItem(s, { ...ItemDefs.pig }); await UI.say('You find a 1/1 pig! It likes you, and will even take the occasional bite out of foes. (can be eaten for 3 life anytime)'); }
       else if (roll === 3) { const w2 = GameState.loseRandomWeapon(s); await UI.say(`You lose ${w2 ? w2.name : 'nothing'} in the fall.`); }
       else if (roll === 4) { GameState.addLife(s, -2); await UI.say('You land on a very sharp object that cannot be specified. -2 life.'); }
       else await UI.say('You fell down a hill. That about covers it.');

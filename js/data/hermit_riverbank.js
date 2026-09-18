@@ -15,7 +15,7 @@
     const s = engine.state;
     await UI.say('The hermit invites you in and puts the kettle on.', { speaker: 'Hermit' });
     const roll = await UI.rollBanner(6);
-    if (roll === 1) await UI.say("You're stuck for 1 turn drinking tea and water. Cozy, at least.");
+    if (roll === 1) { await UI.say("You're stuck for a while drinking tea and water. Cozy, at least."); await UI.stun(1200); }
     else if (roll === 2) await UI.say('He shows off his prize-winning barley. Fascinating. Nothing else happens.');
     else if (roll === 3) await UI.say('You enjoy the hospitality. A pleasant visit.');
     else if (roll === 4) await UI.say('A nosy neighbor pops in to see what the fuss is about, then leaves.');

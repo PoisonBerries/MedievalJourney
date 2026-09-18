@@ -41,7 +41,14 @@
       { label: 'The Art of Toads', value: 'toads' },
       { label: 'Wizard Pants', value: 'pants' },
     ]);
-    if (c === 'spirits') { s.companions.push({ id: 'spirit1', name: 'Spirit' }, { id: 'spirit2', name: 'Spirit' }, { id: 'spirit3', name: 'Spirit' }); await UI.say('You cast 3 ghostly (1/1, non-ranged) spirit companions!'); }
+    if (c === 'spirits') {
+      s.companions.push(
+        { id: 'spirit1', name: 'Spirit', dmg: 1, range: false },
+        { id: 'spirit2', name: 'Spirit', dmg: 1, range: false },
+        { id: 'spirit3', name: 'Spirit', dmg: 1, range: false },
+      );
+      await UI.say('You cast 3 ghostly (1/1, non-ranged) spirit companions! Each one strikes alongside you in a fight.');
+    }
     if (c === 'toads') { s.companions.push({ id: 'toadCompanion', name: 'Toad Companion' }); GameState.addWeapon(s, { id: 'companion-toad', name: 'Toad (4 dmg, ranged)', dmg: 4, range: true }); await UI.say('You catch a 4/4 ranged toad companion!'); }
     if (c === 'pants') { GameState.addLife(s, 1); await UI.say('You put on the Wizard Pants. Stylish, and +1 life.'); }
   }
