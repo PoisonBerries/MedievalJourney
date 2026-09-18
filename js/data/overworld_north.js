@@ -26,9 +26,18 @@ const ONA = {
     for (let y = 6; y <= 11; y++) if (grid[y] && grid[y][x] === '=') setAt(grid, x, y, 'D');
   }
   blob(grid, 8, 18, 5, '^'); // hills border with a gap for the entrance
-  fillRect(grid, A.monsterHills.x - 1, A.monsterHills.y - 1, 3, 3, '=');
+  fillRect(grid, A.monsterHills.x - 1, A.monsterHills.y - 1, 3, 3, 'P');
+  setAt(grid, A.monsterHills.x - 1, A.monsterHills.y + 1, '='); setAt(grid, A.monsterHills.x, A.monsterHills.y + 2, '=');
   scatter(grid, 0, 0, W, H, ',', 0.1, ['=', 'D', '^']);
   scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', 'D', '^']);
+
+  // paved thresholds + flanking posts wherever you can actually walk into
+  // somewhere new (Monster Hills already gets a carved rock gateway above).
+  const entities = [];
+  entities.push({ x: A.monsterHills.x - 3, y: A.monsterHills.y, sprite: 'o_rock', blocking: false });
+  entities.push({ x: A.monsterHills.x + 3, y: A.monsterHills.y, sprite: 'o_rock', blocking: false });
+  gateposts(entities, stampThreshold(grid, A.merlinsHideout.x, A.merlinsHideout.y, 'P', 'v'));
+  gateposts(entities, stampThreshold(grid, A.castleEntrance.x, A.castleEntrance.y, 'P', 'h'));
 
   const roadLoot = { q: [2, 6], itemChance: 0.18, items: [{ ...ItemDefs.healthPotion }, { ...ItemDefs.grammaThings }] };
   const difficultyLoot = { q: [4, 12], itemChance: 0.3, items: [{ ...ItemDefs.pie }, { ...ItemDefs.vanishingSmoke }, { ...ItemDefs.broom }] };
@@ -44,19 +53,20 @@ const ONA = {
     'D': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road2']), overlay: 'o_rock', danger: 0.12, onDanger },
     'T': { tile: 't_snow0', overlay: (tx,ty) => hashPick(tx,ty,['o_pine', 'o_pine', 'o_tree']), solid: true },
     '^': { tile: 't_hillrock', solid: true },
+    'P': { tile: 't_stonepath' },
   };
 
   function marker(p, sprite, label, promptText, onTrigger) {
     return { x: p.x, y: p.y, sprite, label, interact: true, promptText, blocking: true, onTrigger };
   }
 
-  const entities = [
+  entities.push(
     marker(A.monsterHills, 'o_snowyhill', 'Monster Hills', 'climb into the Monster Hills', (e) => e.loadArea('monsterhills', Areas.monsterhills.entryPoint)),
     marker(A.merlinsHideout, 'npc_merlin', "Merlin's Hideout", "enter Merlin's Hideout", (e) => e.loadArea('merlin', Areas.merlin.entryPoint)),
     marker(A.castleEntrance, 'o_castletower', 'The Castle', 'enter the very large Castle', (e) => e.loadArea('castle', Areas.castle.entryPoint)),
     { x: 20, y: 5, sprite: 'o_sign', label: 'Land of Difficulty', interact: true, promptText: 'read sign', blocking: false,
       onTrigger: () => UI.say('"THE LAND OF DIFFICULTY" is carved crudely into a warning post. The road ahead looks rough.', { speaker: 'Sign' }) },
-  ];
+  );
 
   Areas.overworld_north = { map: gridToRows(grid), legend, entities, onDanger };
 })();

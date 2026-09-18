@@ -30,12 +30,32 @@ const OSA = { // anchor coordinates, reused by region files for their exits
   scatter(grid, 0, 0, W, H, 'T', 0.06, ['=', '~', 's']);
   scatter(grid, 0, 0, W, H, ',', 0.14, ['=', '~', 's', 'T']);
   scatter(grid, 0, 0, W, H, 'f', 0.05, ['=', '~', 's', 'T']);
-  // forest ring around woods entrance (visual cue you're nearing the Woods)
-  for (let a2 = 0; a2 < 18; a2++) {
-    const ang = a2 / 18 * Math.PI * 2;
-    const bx = A.woodsEntrance.x + Math.round(Math.cos(ang) * 5), by = A.woodsEntrance.y + Math.round(Math.sin(ang) * 5);
-    if (Math.abs(bx - A.woodsEntrance.x) > 1 || Math.abs(by - A.woodsEntrance.y) > 1) setAt(grid, bx, by, 'T');
+
+  // paved threshold plazas + flanking gateposts at every place you can walk
+  // INTO — the ground itself changes right where you arrive, not just an
+  // icon standing in a field.
+  const entities = [];
+  gateposts(entities, stampThreshold(grid, A.happyTown.x, A.happyTown.y, 'P', 'v'));
+  gateposts(entities, stampThreshold(grid, A.farmlands.x, A.farmlands.y, 'P', 'h'));
+  gateposts(entities, stampThreshold(grid, A.richVillage.x, A.richVillage.y, 'P', 'v'));
+  gateposts(entities, stampThreshold(grid, A.randomTavern.x, A.randomTavern.y, 'P', 'h'));
+  gateposts(entities, stampThreshold(grid, A.hermitsHome.x, A.hermitsHome.y, 'P', 'v'));
+  gateposts(entities, stampThreshold(grid, A.riverbank.x, A.riverbank.y, 'P', 'v'));
+
+  // forest ring around the Woods entrance, with the gap itself framed by a
+  // denser pair of trees and its own worn-earth path — a proper treeline
+  // gateway instead of one tree marker standing alone in a field.
+  for (let a2 = 0; a2 < 22; a2++) {
+    const ang = a2 / 22 * Math.PI * 2;
+    const bx = A.woodsEntrance.x + Math.round(Math.cos(ang) * 6), by = A.woodsEntrance.y + Math.round(Math.sin(ang) * 6);
+    if (Math.abs(bx - A.woodsEntrance.x) > 1 || Math.abs(by - A.woodsEntrance.y) > 2) setAt(grid, bx, by, 'T');
   }
+  setAt(grid, A.woodsEntrance.x - 2, A.woodsEntrance.y - 5, 'T'); setAt(grid, A.woodsEntrance.x + 2, A.woodsEntrance.y - 5, 'T');
+  fillRect(grid, A.woodsEntrance.x - 1, A.woodsEntrance.y - 5, 3, 6, 'f');
+
+  // The Gate: extend real wall segments either side of the gatehouse so it
+  // reads as a checkpoint spanning the whole road, not a lone tower.
+  for (let dx = -5; dx <= 5; dx++) if (Math.abs(dx) > 1) setAt(grid, A.gate.x + dx, A.gate.y, 'W');
   setAt(grid, A.gate.x, A.gate.y - 1, '='); // road continues to the gate building above
 
   const legend = {
@@ -43,6 +63,8 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     ',': { tile: (tx,ty) => hashPick(tx,ty,['t_grass1', 't_grass5']), danger: 0.018 },
     'f': { tile: (tx,ty) => hashPick(tx,ty,['t_grass2', 't_grass4', 't_grass5']), overlay: (tx,ty) => hashPick(tx,ty,['o_flowers0', 'o_flowers1', 'o_flowers2', 'o_tuft0']), danger: 0.018 },
     '=': { tile: (tx,ty) => hashPick(tx,ty,['t_road0', 't_road1', 't_road2']), danger: 0.035 },
+    'P': { tile: 't_stonepath' },
+    'W': { tile: 't_grass0', overlay: 'o_wallseg', solid: true },
     'T': { tile: 't_grass0', overlay: (tx,ty) => hashPick(tx,ty,['o_tree', 'o_tree', 'o_pine']), solid: true },
     '~': { tile: (tx,ty) => hashPick(tx,ty,['t_water0', 't_water1']), solid: true, water: true },
     's': { tile: 't_sand' },
@@ -53,7 +75,7 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     return { x: p.x, y: p.y, sprite, label, size, interact: true, promptText, blocking: true, onTrigger };
   }
 
-  const entities = [
+  entities.push(
     marker(A.happyTown, 'b_generic_red', 'Happy Town', 'enter Happy Town (no fighting)', (e) => e.loadArea('happytown', Areas.happytown.entryPoint)),
     marker(A.farmlands, 'b_generic_brown', 'Farmlands', 'enter the Farmlands', (e) => e.loadArea('farmlands', Areas.farmlands.entryPoint)),
     marker(A.richVillage, 'b_rich', 'Rich Village', 'enter Rich Village', (e) => e.loadArea('richvillage', Areas.richvillage.entryPoint)),
@@ -68,7 +90,7 @@ const OSA = { // anchor coordinates, reused by region files for their exits
     },
     { x: 4, y: 4, sprite: 'o_sign', label: '', interact: true, promptText: 'read sign', blocking: false,
       onTrigger: () => UI.say('"Poor Country — work your way up."', { speaker: 'Sign' }) },
-  ];
+  );
 
   async function lakeScript(engine) {
     const s = engine.state;

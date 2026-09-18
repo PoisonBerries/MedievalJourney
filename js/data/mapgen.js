@@ -39,6 +39,20 @@ function scatter(grid, x, y, w, h, ch, density = 0.08, avoid = ['=', '~']) {
   }
 }
 
+// stamps a small paved "threshold" patch at a point-of-interest marker so
+// the ground itself signals "this is a place you enter", not just the icon
+// standing on it — then returns two flanking positions for gatepost props.
+function stampThreshold(grid, cx, cy, plazaCh, orientation = 'h', radius = 2) {
+  blob(grid, cx, cy, radius, plazaCh);
+  if (orientation === 'h') return [{ x: cx - radius - 1, y: cy }, { x: cx + radius + 1, y: cy }];
+  return [{ x: cx, y: cy - radius - 1 }, { x: cx, y: cy + radius + 1 }];
+}
+function gateposts(entities, points, sprite = 'o_gatepost') {
+  // decorative only (never blocking) — they frame the approach without any
+  // risk of standing in the way of the road they're meant to mark.
+  points.forEach(p => entities.push({ x: p.x, y: p.y, sprite, blocking: false }));
+}
+
 // simple linear "node graph" corridor generator used by Woods / Monster
 // Hills / Land of Difficulty / Merlin's Hideout / Castle wings: a snaking
 // path of rooms, one per numbered node from the original notes, each

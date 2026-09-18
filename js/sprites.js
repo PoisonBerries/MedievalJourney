@@ -208,6 +208,30 @@ function drawFence(grid, H) {
   shadeEdge(H, grid, 0, 13, 32, 3, PAL.woodLo, PAL.wood3);
   shadeEdge(H, grid, 0, 21, 32, 3, PAL.woodLo, PAL.wood3);
 }
+function drawGatePost(grid, H) {
+  // a stone pillar with a lit lantern — flanks the approach to a place, so
+  // walking between two of them reads as crossing a threshold.
+  H.ellipse(grid, 16, 29, 6, 2, PAL.shadow);
+  H.rect(grid, 12, 10, 8, 19, PAL.stoneMid);
+  H.rect(grid, 12, 10, 2, 19, PAL.stoneHi);
+  H.rect(grid, 18, 10, 2, 19, PAL.stoneDark);
+  for (let y = 12; y < 28; y += 5) H.rect(grid, 12, y, 8, 1, PAL.stoneDark);
+  H.rect(grid, 10, 6, 12, 4, PAL.stoneDark); // cap
+  H.rect(grid, 13, 1, 6, 6, PAL.woodLo);
+  H.circle(grid, 16, 4, 3, PAL.flowerYellow);
+  H.circle(grid, 16, 4, 1, PAL.cream);
+  H.outlineSilhouette(grid, PAL.outline);
+}
+function drawWallSegment(grid, H) {
+  // a straight fortification run — reused to extend either side of the
+  // gatehouse so it reads as a checkpoint spanning the road, not a
+  // free-standing tower.
+  H.rect(grid, 0, 8, 32, 24, PAL.stoneMid);
+  for (let y = 8; y < 32; y += 6) H.rect(grid, 0, y, 32, 1, PAL.stoneDark);
+  for (let x = 0; x < 32; x += 8) H.rect(grid, x, 8, 2, 24, PAL.stoneDark);
+  H.rect(grid, 0, 0, 32, 10, PAL.stoneDark);
+  for (let x = 2; x < 32; x += 8) H.rect(grid, x, 0, 4, 6, PAL.stoneMid);
+}
 function drawCastleWall(grid, H) {
   H.rect(grid, 0, 0, 32, 32, PAL.stoneMid);
   H.rect(grid, 0, 0, 32, 6, PAL.stoneDark);
@@ -585,6 +609,8 @@ function initSprites() {
   reg('o_well', 32, 32, drawWell, 1);
   reg('o_fence', 32, 32, drawFence, 1);
   reg('o_castlewall', 32, 32, drawCastleWall, 1);
+  reg('o_gatepost', 32, 32, drawGatePost, 1);
+  reg('o_wallseg', 32, 32, drawWallSegment, 1);
   reg('o_castletower', 64, 64, drawCastleTower, 1);
   reg('o_snowyhill', 64, 64, drawSnowyHill, 1);
   reg('o_gatehouse', 64, 64, drawGatehouse, 1);
